@@ -2,11 +2,11 @@ const { defineConfig } = require("@vue/cli-service");
 
 module.exports = defineConfig({
   transpileDependencies: true,
-  publicPath: "./",
+  publicPath: process.env.NODE_ENV === "production" ? "./" : "/",
 
   pluginOptions: {
     electronBuilder: {
-      nodeIntegration: true, // Разрешает использование Node.js API в Electron
+      nodeIntegration: true,
     },
   },
 

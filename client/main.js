@@ -1,8 +1,10 @@
 const { app, BrowserWindow } = require("electron/main");
 const path = require("node:path");
 
+let mainWindow;
+
 function createWindow() {
-  const win = new BrowserWindow({
+  mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
     webPreferences: {
@@ -16,7 +18,8 @@ function createWindow() {
       ? "http://localhost:8080"
       : `file://${path.join(__dirname, "dist", "index.html")}`;
 
-  win.loadURL("http://localhost:8080");
+  mainWindow.loadURL(startURL);
+  // mainWindow.loadURL("http://localhost:8080");
 }
 
 app.whenReady().then(() => {
