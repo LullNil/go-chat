@@ -1,58 +1,112 @@
 <template>
-  <div class="hello">
-    <h1>{{ msg }}</h1>
-    <p>
-      For a guide and recipes on how to configure / customize this project,<br>
-      check out the
-      <a href="https://cli.vuejs.org" target="_blank" rel="noopener">vue-cli documentation</a>.
-    </p>
-    <h3>Installed CLI Plugins</h3>
-    <ul>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-babel" target="_blank" rel="noopener">babel</a></li>
-      <li><a href="https://github.com/vuejs/vue-cli/tree/dev/packages/%40vue/cli-plugin-eslint" target="_blank" rel="noopener">eslint</a></li>
-    </ul>
-    <h3>Essential Links</h3>
-    <ul>
-      <li><a href="https://vuejs.org" target="_blank" rel="noopener">Core Docs</a></li>
-      <li><a href="https://forum.vuejs.org" target="_blank" rel="noopener">Forum</a></li>
-      <li><a href="https://chat.vuejs.org" target="_blank" rel="noopener">Community Chat</a></li>
-      <li><a href="https://twitter.com/vuejs" target="_blank" rel="noopener">Twitter</a></li>
-      <li><a href="https://news.vuejs.org" target="_blank" rel="noopener">News</a></li>
-    </ul>
-    <h3>Ecosystem</h3>
-    <ul>
-      <li><a href="https://router.vuejs.org" target="_blank" rel="noopener">vue-router</a></li>
-      <li><a href="https://vuex.vuejs.org" target="_blank" rel="noopener">vuex</a></li>
-      <li><a href="https://github.com/vuejs/vue-devtools#vue-devtools" target="_blank" rel="noopener">vue-devtools</a></li>
-      <li><a href="https://vue-loader.vuejs.org" target="_blank" rel="noopener">vue-loader</a></li>
-      <li><a href="https://github.com/vuejs/awesome-vue" target="_blank" rel="noopener">awesome-vue</a></li>
-    </ul>
+  <div :class="['chat-container', { 'dark-theme': isDarkTheme }]">
+    <div class="chat-box">
+      <div class="chat-title">
+        <h2>Chat</h2>
+        <button @click="toggleTheme" class="btn-theme">
+          <span
+            :class="
+              isDarkTheme ? 'bi bi-brightness-high-fill' : 'bi bi-moon-fill'
+            "
+          ></span>
+        </button>
+      </div>
+
+      <div ref="chatContainer" class="chat-messages custom-scroll">
+        <div
+          v-for="(msg, index) in messages"
+          :key="index"
+          class="chat-message"
+          :class="msg.user === 'Вы' ? 'sent' : 'received'"
+        >
+          <p class="chat-text">{{ msg.text }}</p>
+        </div>
+      </div>
+
+      <div class="chat-input">
+        <textarea
+          class="input-text custom-scroll"
+          v-model="newMessage"
+          @keydown.enter.exact.prevent="sendMessage"
+          @keydown.enter.ctrl.exact="addNewLine"
+          placeholder="Введите сообщение..."
+          rows="1"
+          ref="textarea"
+          @input="adjustTextareaHeight"
+        ></textarea>
+        <button class="btn-circle" @click="sendMessage">➤</button>
+      </div>
+    </div>
   </div>
 </template>
 
 <script>
 export default {
-  name: 'HelloWorld',
-  props: {
-    msg: String
-  }
-}
+  data() {
+    return {
+      ws: null,
+      messages: [],
+      newMessage: "",
+      isDarkTheme: false,
+    };
+  },
+  mounted() {
+    this.ws = new WebSocket("ws://localhost:8081/ws");
+
+    this.ws.onmessage = (event) => {
+      setTimeout(() => {
+        try {
+          const msg = JSON.parse(event.data);
+          this.messages.push(msg);
+          this.$nextTick(this.scrollToBottom);
+        } catch (error) {
+          console.error("Ошибка парсинга JSON:", error);
+        }
+      }, 1000);
+    };
+
+    this.ws.onopen = () => console.log("WebSocket подключен");
+    this.ws.onerror = (error) => console.error("WebSocket ошибка:", error);
+    this.ws.onclose = () => console.log("WebSocket закрыт");
+  },
+  methods: {
+    sendMessage() {
+      if (!this.newMessage.trim()) return;
+      const msg = { user: "Вы", text: this.newMessage };
+      this.messages.push(msg);
+      this.ws.send(JSON.stringify(msg));
+      this.newMessage = "";
+      this.$nextTick(() => {
+        this.scrollToBottom();
+        this.resetTextareaHeight();
+      });
+    },
+    addNewLine(event) {
+      event.preventDefault();
+      this.newMessage += "\n";
+      this.$nextTick(this.adjustTextareaHeight);
+    },
+    scrollToBottom() {
+      const chatContainer = this.$refs.chatContainer;
+      if (chatContainer) {
+        chatContainer.scrollTop = chatContainer.scrollHeight;
+      }
+    },
+    toggleTheme() {
+      this.isDarkTheme = !this.isDarkTheme;
+    },
+    adjustTextareaHeight() {
+      const textarea = this.$refs.textarea;
+      textarea.style.height = "auto";
+      textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
+    },
+    resetTextareaHeight() {
+      this.$refs.textarea.style.height = "auto";
+    },
+  },
+};
 </script>
 
-<!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped>
-h3 {
-  margin: 40px 0 0;
-}
-ul {
-  list-style-type: none;
-  padding: 0;
-}
-li {
-  display: inline-block;
-  margin: 0 10px;
-}
-a {
-  color: #42b983;
-}
+@import "@/styles/chat.css";
 </style>

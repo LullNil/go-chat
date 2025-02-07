@@ -16,7 +16,7 @@ npm run dev
 ### Compiles and minifies for production (Windows)
 
 ```
-npm run build:win
+npm run build
 ```
 
 ### Customize configuration

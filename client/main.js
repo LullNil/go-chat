@@ -12,14 +12,20 @@ function createWindow() {
     },
   });
 
-  // Determine the operating mode: development or production
+  // mainWindow.setMenu(null);
+
+  // Determine the operating mode - development or production
   const startURL =
     process.env.NODE_ENV === "development"
       ? "http://localhost:8080"
       : `file://${path.join(__dirname, "dist", "index.html")}`;
 
   mainWindow.loadURL(startURL);
-  // mainWindow.loadURL("http://localhost:8080");
+
+  // Opening Developer Tools in Development Mode
+  if (process.env.NODE_ENV === "development") {
+    mainWindow.webContents.openDevTools();
+  }
 }
 
 app.whenReady().then(() => {
