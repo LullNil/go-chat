@@ -1,0 +1,40 @@
+/* Middle panel and Chat window */
+.middle-panel,
+.chat-box {
+  background: var(--glass-effect);
+  backdrop-filter: blur(15px);
+  border-radius: 12px;
+  box-shadow: 0 4px 20px var(--dark-glass);
+  transition: var(--transition-default);
+}
+
+.middle-panel {
+  width: 280px;
+  padding: 16px;
+  opacity: 1;
+  transform: translateX(0);
+
+  /* Appear animation */
+  animation: panelSlide 0.4s ease-out;
+}
+
+.dark-theme .middle-panel,
+.dark-theme .chat-box {
+  background: var(--secondary-dark);
+}
+
+.middle-panel.closed {
+  width: 0;
+  opacity: 0;
+  transform: translateX(-20px);
+  padding: 0;
+  margin: 0;
+}
+
+/* Chat window */
+.chat-box {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+}

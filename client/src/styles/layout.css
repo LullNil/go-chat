@@ -1,0 +1,25 @@
+/* Main containers */
+.chat-container {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  font-family: "Inter", sans-serif;
+  padding: var(--outer-padding);
+  box-sizing: border-box;
+  background: var(--primary-light);
+}
+
+.dark-theme .chat-container {
+  background: var(--primary-dark);
+}
+
+.main-content {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  height: 100%;
+  gap: 4px;
+  transition: var(--transition-default);
+  margin-left: 60px;
+}

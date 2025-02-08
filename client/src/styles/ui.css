@@ -1,65 +1,45 @@
 /* Button styles */
 .btn-circle {
-    background: #007bff;
-    color: white;
-    border: none;
-    padding: 10px;
-    cursor: pointer;
-    font-size: 1.2rem;
-    border-radius: 50%;
-    width: 40px;
-    height: 40px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: 0.2s;
-  }
-  
-  .btn-circle:hover {
-    background: #0056b3;
-  }
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 10px;
+  cursor: pointer;
+  font-size: 1.2rem;
+  border-radius: 50%;
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: 0.2s;
+}
 
-  .btn-theme {
-    background: none;
-    border: none;
-    font-size: 1.5rem;
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: color 0.3s ease-in-out;
-  }
-  
-  .dark-theme .btn-theme {
-    color: #f5c542;
-  }
-  
-  .btn-theme:hover {
-    opacity: 0.8;
-  }
-  
-  /* textarea styles */
-  .input-text {
-    flex: 1;
-    padding: 8px;
-    border: none;
-    outline: none;
-    font-size: 1rem;
-    resize: vertical;
-    max-height: 150px;
-    min-height: 40px;
-    overflow-y: auto;
-    border-radius: 8px;
-    box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
-  }
-  
-  /* Scrollbar styles */
-  .custom-scroll::-webkit-scrollbar {
-    width: 5px;
-  }
-  
-  .custom-scroll::-webkit-scrollbar-thumb {
-    background: rgba(0, 0, 0, 0.2);
-    border-radius: 3px;
-  }
-  
+.btn-circle:hover {
+  background: #0056b3;
+}
+
+/* textarea styles */
+.input-text {
+  flex: 1;
+  padding: 8px;
+  border: none;
+  outline: none;
+  font-size: 1rem;
+  resize: vertical;
+  max-height: 150px;
+  min-height: 40px;
+  overflow-y: auto;
+  border-radius: 8px;
+  box-shadow: inset 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Scrollbar styles */
+.custom-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+
+.custom-scroll::-webkit-scrollbar-thumb {
+  background: rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+}
