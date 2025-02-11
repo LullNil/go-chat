@@ -27,7 +27,7 @@
   --sidebar-text-dark: var(--text-dark);
 
   /* Layout */
-  --outer-padding: 5px;
+  --outer-padding: 6px;
 }
 
 .dark-theme {

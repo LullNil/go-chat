@@ -1,23 +1,30 @@
 <template>
+  <!-- Dark theme -->
   <div :class="['chat-container', { 'dark-theme': isDarkTheme }]">
+    <!-- Main content container -->
     <div class="main-content">
+      <!-- Sidebar -->
       <MainSidebar
         :isDarkTheme="isDarkTheme"
-        :isSidebarOpen="isSidebarOpen"
         @toggle-theme="toggleTheme"
         @toggle-middle-panel="toggleMiddlePanel"
       />
 
+      <!-- MiddlePanel transmits the selected chat mode -->
       <MiddlePanel
         :isMiddleOpen="isMiddlePanelOpen"
+        :activeChat="activeChat"
         @toggle-middle-panel="toggleMiddlePanel"
+        @select-chat="selectChat"
+        @close-chat="closeChat"
       />
 
+      <!-- ChatBox receives list of messages and active chat -->
       <ChatBox
-        :messages="messages"
+        :messages="activeMessages"
+        :activeChat="activeChat"
         @send-message="sendMessage"
         @toggle-middle-panel="toggleMiddlePanel"
-        @toggle-sidebar="toggleSidebar"
       />
     </div>
   </div>
@@ -34,13 +41,11 @@ export default {
     MiddlePanel,
     ChatBox,
   },
-
   data() {
     return {
+      activeChat: "", // "general" или "echo", или пустая строка (чат не выбран)
+      activeMessages: [],
       ws: null,
-      messages: [],
-      isSidebarOpen: false,
-      // Читаем значения из localStorage, если они там есть, иначе используем дефолтные
       isMiddlePanelOpen: localStorage.getItem("isMiddlePanelOpen")
         ? JSON.parse(localStorage.getItem("isMiddlePanelOpen"))
         : false,
@@ -50,50 +55,98 @@ export default {
     };
   },
 
-  mounted() {
-    this.ws = new WebSocket("ws://localhost:8081/ws");
-
-    this.ws.onmessage = (event) => {
-      setTimeout(() => {
-        try {
-          const msg = JSON.parse(event.data);
-          this.messages.push(msg);
-          this.$nextTick(this.scrollToBottom);
-        } catch (error) {
-          console.error("Ошибка парсинга JSON:", error);
-        }
-      }, 1000);
-    };
-
-    this.ws.onopen = () => console.log("WebSocket подключен");
-    this.ws.onerror = (error) => console.error("WebSocket ошибка:", error);
-    this.ws.onclose = () => console.log("WebSocket закрыт");
-  },
-
   methods: {
-    sendMessage(msg) {
-      this.messages.push(msg);
-      this.ws.send(JSON.stringify(msg));
-    },
-
+    // Method toggleTheme switches between light and dark themes
     toggleTheme() {
       this.isDarkTheme = !this.isDarkTheme;
-      // Set theme condition to localStorage
       localStorage.setItem("isDarkTheme", JSON.stringify(this.isDarkTheme));
     },
 
+    // Method toggleMiddlePanel toggles the visibility of the middle panel
     toggleMiddlePanel() {
       this.isMiddlePanelOpen = !this.isMiddlePanelOpen;
-      // Set middle panel condition to localStorage
       localStorage.setItem(
         "isMiddlePanelOpen",
         JSON.stringify(this.isMiddlePanelOpen)
       );
     },
 
-    toggleSidebar() {
-      this.isSidebarOpen = !this.isSidebarOpen;
+    // Выбор режима чата (general или echo)
+    selectChat(chatType) {
+      if (this.activeChat === chatType) return;
+      this.disconnectWebSocket();
+      this.activeChat = chatType;
+      this.activeMessages = [];
+      this.connectWebSocket();
     },
+
+    // Закрытие чата – сбрасываем активный режим и сообщения
+    closeChat() {
+      this.disconnectWebSocket();
+      this.activeChat = "";
+      this.activeMessages = [];
+    },
+
+    /**
+     * Establishes a WebSocket connection to the server
+     * based on the currently selected chat type (general or echo).
+     */
+    connectWebSocket() {
+      let url = "";
+      if (this.activeChat === "general") {
+        url = "ws://localhost:8081/ws/general";
+      } else if (this.activeChat === "echo") {
+        url = "ws://localhost:8081/ws/echo";
+      }
+      if (url) {
+        this.ws = new WebSocket(url);
+
+        // Event handlers
+        this.ws.onopen = () =>
+          console.log(`WebSocket connected: ${this.activeChat}`);
+        this.ws.onmessage = (event) => {
+          try {
+            const msg = JSON.parse(event.data);
+            if (this.activeChat === "echo") {
+              // In echo chat, add a 1 second delay to receive the echo response
+              setTimeout(() => {
+                this.activeMessages.push(msg);
+              }, 1000);
+            } else {
+              this.activeMessages.push(msg);
+            }
+          } catch (error) {
+            console.error("Error parsing JSON:", error);
+          }
+        };
+        this.ws.onerror = (error) => console.error("WebSocket error:", error);
+        this.ws.onclose = () => console.log("WebSocket closed");
+      }
+    },
+
+    disconnectWebSocket() {
+      if (this.ws) {
+        this.ws.close();
+        this.ws = null;
+      }
+    },
+
+    // Отправка сообщения через WS. Для echo-чата – также добавляем сообщение сразу в список.
+    sendMessage(msg) {
+      if (this.activeChat === "echo") {
+        // Показываем отправленное сообщение сразу в эхо-чате
+        this.activeMessages.push(msg);
+      }
+      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
+        this.ws.send(JSON.stringify(msg));
+      } else {
+        console.error("WebSocket не открыт.");
+      }
+    },
+  },
+
+  beforeUnmount() {
+    this.disconnectWebSocket();
   },
 };
 </script>

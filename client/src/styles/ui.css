@@ -1,25 +1,4 @@
-/* Button styles */
-.btn-circle {
-  background: #007bff;
-  color: white;
-  border: none;
-  padding: 10px;
-  cursor: pointer;
-  font-size: 1.2rem;
-  border-radius: 50%;
-  width: 40px;
-  height: 40px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: 0.2s;
-}
-
-.btn-circle:hover {
-  background: #0056b3;
-}
-
-/* textarea styles */
+/* Input styles */
 .input-text {
   flex: 1;
   padding: 8px;
@@ -42,4 +21,93 @@
 .custom-scroll::-webkit-scrollbar-thumb {
   background: rgba(0, 0, 0, 0.2);
   border-radius: 3px;
+}
+
+/* Custom title bar styles */
+.custom-title-bar {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 55px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 10px;
+  user-select: none;
+  z-index: 10000;
+  transition: var(--transition-default);
+}
+
+/* Window drag area */
+.window-drag-area {
+  flex-grow: 1;
+  -webkit-app-region: drag;
+  height: 100%;
+}
+
+/* Control button styles */
+.window-buttons {
+  display: flex;
+  gap: 12px;
+  height: 100%;
+  align-items: center;
+}
+
+.window-button {
+  width: 40px;
+  height: 40px;
+  padding: 8px;
+  border-radius: 8px;
+  border: none;
+  background: none;
+  cursor: pointer;
+  position: relative;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: inherit;
+}
+
+.window-button svg {
+  width: 16px;
+  height: 16px;
+  transition: opacity 0.2s ease;
+}
+
+/* Light theme colors */
+.custom-title-bar:not(.dark-theme) .window-button:not(.close) {
+  color: #5f6368;
+}
+.custom-title-bar:not(.dark-theme) .window-button.close {
+  color: #5f6368;
+}
+
+/* Dark theme colors */
+.dark-theme .custom-title-bar .window-button:not(.close) {
+  color: #9aa0a6;
+}
+.dark-theme .custom-title-bar .window-button.close {
+  color: #9aa0a6;
+}
+
+/* Hover effects */
+.window-button:hover {
+  background: rgba(0, 0, 0, 0.15) !important;
+  transform: scale(1.1);
+}
+
+.dark-theme .window-button:hover {
+  background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.window-button.close:hover {
+  background: #ff5f57 !important;
+  transform: scale(1.15);
+}
+
+/* Animations */
+.window-button {
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
 }

@@ -1,9 +1,12 @@
 <template>
-  <div :class="['sidebar', { 'sidebar-open': isSidebarOpen }]">
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <!-- Theme toggle button -->
     <button @click="$emit('toggle-theme')" class="btn-theme">
       <span :class="isDarkTheme ? 'bi bi-sun' : 'bi bi-moon'"></span>
     </button>
 
+    <!-- Buttons inside the sidebar -->
     <div class="nav-icons">
       <span
         class="bi bi-chat-dots"
@@ -20,7 +23,6 @@
 export default {
   props: {
     isDarkTheme: Boolean,
-    isSidebarOpen: Boolean,
   },
 };
 </script>
