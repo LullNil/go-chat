@@ -12,5 +12,6 @@ import "@/styles/animations.css";
 import "@/styles/responsive.css";
 import "@/styles/theme.css";
 import "@/styles/ui.css";
+import "@/styles/fonts.css";
 
 createApp(App).mount("#app");

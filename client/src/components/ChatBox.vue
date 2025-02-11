@@ -1,40 +1,45 @@
 <template>
   <div class="chat-box">
-    <div class="chat-title">
-      <!-- Button that appears only on small screens -->
-      <button @click="$emit('toggle-middle-panel')" class="menu-toggle">
-        <span class="bi bi-list"></span>
-      </button>
-      <h2>Chat</h2>
-    </div>
+    <!-- Если выбран чат, отображаем его содержимое -->
+    <div v-if="activeChat" class="chat-messages custom-scroll">
+      <div class="chat-title">
+        <!-- Кнопка для маленьких экранов (можно оставить для переключения панели) -->
+        <button @click="$emit('toggle-middle-panel')" class="menu-toggle">
+          <span class="bi bi-list"></span>
+        </button>
+        <h2>Chat</h2>
+      </div>
 
-    <!-- Chat content -->
-    <div ref="chatContainer" class="chat-messages custom-scroll">
-      <div
-        v-for="(msg, index) in messages"
-        :key="index"
-        class="chat-message"
-        :class="msg.user === 'Вы' ? 'sent' : 'received'"
-      >
-        <p class="chat-text">{{ msg.text }}</p>
+      <!-- Область для сообщений -->
+      <div ref="chatContainer" class="chat-messages custom-scroll">
+        <div
+          v-for="(msg, index) in messages"
+          :key="index"
+          class="chat-message"
+          :class="msg.user === 'Вы' ? 'sent' : 'received'"
+        >
+          <p class="chat-text">{{ msg.text }}</p>
+        </div>
+      </div>
+
+      <!-- Поле ввода сообщения и кнопка отправки -->
+      <div class="chat-input">
+        <textarea
+          class="input-text custom-scroll"
+          v-model="newMessage"
+          @keydown.enter.exact.prevent="sendMessage()"
+          @keydown.enter.ctrl.exact="addNewLine"
+          placeholder="Введите сообщение..."
+          rows="1"
+          ref="textarea"
+          @input="adjustTextareaHeight"
+        ></textarea>
+        <button class="btn-circle" @click="sendMessage()">➤</button>
       </div>
     </div>
-
-    <!-- Input field and send button -->
-    <div class="chat-input">
-      <textarea
-        class="input-text custom-scroll"
-        v-model="newMessage"
-        @keydown.enter.exact.prevent="sendMessage"
-        @keydown.enter.ctrl.exact="addNewLine"
-        placeholder="Введите сообщение..."
-        rows="1"
-        ref="textarea"
-        @input="adjustTextareaHeight"
-      ></textarea>
-
-      <!-- Send button -->
-      <button class="btn-circle" @click="sendMessage">➤</button>
+    <!-- Если чат не выбран, показываем placeholder -->
+    <div v-else class="chat-placeholder">
+      <p>Выберите чат для начала общения</p>
     </div>
   </div>
 </template>
@@ -42,7 +47,15 @@
 <script>
 export default {
   props: {
-    messages: Array,
+    activeChat: {
+      type: String,
+      default: "",
+    },
+
+    messages: {
+      type: Array,
+      default: () => [],
+    },
   },
 
   data() {
@@ -72,8 +85,10 @@ export default {
       this.$emit("send-message", msg);
       this.newMessage = "";
       this.$nextTick(() => {
-        this.$refs.chatContainer.scrollTop =
-          this.$refs.chatContainer.scrollHeight;
+        const chatContainer = this.$refs.chatContainer;
+        if (chatContainer) {
+          chatContainer.scrollTop = chatContainer.scrollHeight;
+        }
         this.adjustTextareaHeight();
       });
     },

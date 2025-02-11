@@ -1,4 +1,4 @@
-const { app, BrowserWindow } = require("electron/main");
+const { app, ipcMain, BrowserWindow } = require("electron/main");
 const path = require("node:path");
 
 let mainWindow;
@@ -7,8 +7,12 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: 1000,
     height: 800,
+    frame: false,
+    titleBarStyle: "hidden",
     webPreferences: {
-      nodeIntegration: true,
+      nodeIntegration: false,
+      contextIsolation: true,
+      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -27,6 +31,28 @@ function createWindow() {
     mainWindow.webContents.openDevTools();
   }
 }
+
+// Events for custom title bar
+ipcMain.on("window-minimize", (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.minimize();
+});
+
+ipcMain.on("window-maximize", (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) {
+    if (win.isMaximized()) {
+      win.unmaximize();
+    } else {
+      win.maximize();
+    }
+  }
+});
+
+ipcMain.on("window-close", (event) => {
+  const win = BrowserWindow.fromWebContents(event.sender);
+  if (win) win.close();
+});
 
 app.whenReady().then(() => {
   createWindow();
