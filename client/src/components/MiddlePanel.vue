@@ -1,27 +1,18 @@
 <template>
-  <!-- Middle panel -->
   <div :class="['middle-panel', { closed: !isMiddleOpen }]">
-    <!-- Show middle panel button (appears only on small screens) -->
     <div class="close-mid-btn">
-      <span @click="$emit('toggle-middle-panel')" class="bi bi-list"></span>
+      <span @click="emit('toggle-middle-panel')" class="bi bi-list"></span>
     </div>
 
-    <!-- If panel open show chat switcher -->
-    <div class="chat-switcher" v-if="isMiddleOpen">
+    <div v-if="isMiddleOpen" class="chat-switcher">
       <button
-        @click="selectChat('general')"
-        :class="{ active: activeChat === 'general' }"
+        v-for="chat in chats"
+        :key="chat.id"
+        @click="selectChat(chat.id)"
+        :class="{ active: activeChat === chat.id }"
       >
-        Общий чат
+        {{ chat.label }}
       </button>
-
-      <button
-        @click="selectChat('echo')"
-        :class="{ active: activeChat === 'echo' }"
-      >
-        Эхо-чат
-      </button>
-
       <button v-if="activeChat" @click="closeChat" class="close-btn">
         × Закрыть чат
       </button>
@@ -29,25 +20,24 @@
   </div>
 </template>
 
-<script>
-export default {
-  props: {
-    isMiddleOpen: Boolean,
-    activeChat: {
-      type: String,
-      default: "",
-    },
-  },
-  methods: {
-    selectChat(chatType) {
-      this.$emit("select-chat", chatType);
-    },
+<script setup>
+import { defineProps, defineEmits } from "vue";
 
-    closeChat() {
-      this.$emit("close-chat");
-    },
-  },
-};
+// eslint-disable-next-line no-unused-vars
+const props = defineProps({
+  isMiddleOpen: Boolean,
+  activeChat: String,
+});
+
+const emit = defineEmits(["toggle-middle-panel", "select-chat", "close-chat"]);
+
+const chats = [
+  { id: "general", label: "Общий чат" },
+  { id: "echo", label: "Эхо-чат" },
+];
+
+const selectChat = (chatType) => emit("select-chat", chatType);
+const closeChat = () => emit("close-chat");
 </script>
 
 <style scoped>

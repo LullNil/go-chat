@@ -1,16 +1,11 @@
 <template>
-  <!-- Dark theme -->
   <div :class="['chat-container', { 'dark-theme': isDarkTheme }]">
-    <!-- Main content container -->
     <div class="main-content">
-      <!-- Sidebar -->
       <MainSidebar
         :isDarkTheme="isDarkTheme"
         @toggle-theme="toggleTheme"
         @toggle-middle-panel="toggleMiddlePanel"
       />
-
-      <!-- MiddlePanel transmits the selected chat mode -->
       <MiddlePanel
         :isMiddleOpen="isMiddlePanelOpen"
         :activeChat="activeChat"
@@ -18,12 +13,10 @@
         @select-chat="selectChat"
         @close-chat="closeChat"
       />
-
-      <!-- ChatBox receives list of messages and active chat -->
       <ChatBox
         :messages="activeMessages"
         :activeChat="activeChat"
-        @send-message="sendMessage"
+        @send-message="handleSendMessage"
         @toggle-middle-panel="toggleMiddlePanel"
       />
     </div>
@@ -31,122 +24,117 @@
 </template>
 
 <script>
+import { ref, watch, onBeforeUnmount } from "vue";
 import MainSidebar from "./MainSidebar.vue";
 import MiddlePanel from "./MiddlePanel.vue";
 import ChatBox from "./ChatBox.vue";
+import useWebSocket from "@/composables/useWebSocket";
 
 export default {
-  components: {
-    MainSidebar,
-    MiddlePanel,
-    ChatBox,
-  },
-  data() {
+  components: { MainSidebar, MiddlePanel, ChatBox },
+
+  setup() {
+    const { isDarkTheme, toggleTheme } = useTheme();
+    const { isMiddlePanelOpen, toggleMiddlePanel } = useMiddlePanel();
+    const {
+      activeChat,
+      activeMessages,
+      selectChat,
+      closeChat,
+      handleSendMessage,
+    } = useChat();
+
     return {
-      activeChat: "", // "general" или "echo", или пустая строка (чат не выбран)
-      activeMessages: [],
-      ws: null,
-      isMiddlePanelOpen: localStorage.getItem("isMiddlePanelOpen")
-        ? JSON.parse(localStorage.getItem("isMiddlePanelOpen"))
-        : false,
-      isDarkTheme: localStorage.getItem("isDarkTheme")
-        ? JSON.parse(localStorage.getItem("isDarkTheme"))
-        : false,
+      isDarkTheme,
+      toggleTheme,
+      isMiddlePanelOpen,
+      toggleMiddlePanel,
+      activeChat,
+      activeMessages,
+      selectChat,
+      closeChat,
+      handleSendMessage,
     };
   },
-
-  methods: {
-    // Method toggleTheme switches between light and dark themes
-    toggleTheme() {
-      this.isDarkTheme = !this.isDarkTheme;
-      localStorage.setItem("isDarkTheme", JSON.stringify(this.isDarkTheme));
-    },
-
-    // Method toggleMiddlePanel toggles the visibility of the middle panel
-    toggleMiddlePanel() {
-      this.isMiddlePanelOpen = !this.isMiddlePanelOpen;
-      localStorage.setItem(
-        "isMiddlePanelOpen",
-        JSON.stringify(this.isMiddlePanelOpen)
-      );
-    },
-
-    // Выбор режима чата (general или echo)
-    selectChat(chatType) {
-      if (this.activeChat === chatType) return;
-      this.disconnectWebSocket();
-      this.activeChat = chatType;
-      this.activeMessages = [];
-      this.connectWebSocket();
-    },
-
-    // Закрытие чата – сбрасываем активный режим и сообщения
-    closeChat() {
-      this.disconnectWebSocket();
-      this.activeChat = "";
-      this.activeMessages = [];
-    },
-
-    /**
-     * Establishes a WebSocket connection to the server
-     * based on the currently selected chat type (general or echo).
-     */
-    connectWebSocket() {
-      let url = "";
-      if (this.activeChat === "general") {
-        url = "ws://localhost:8081/ws/general";
-      } else if (this.activeChat === "echo") {
-        url = "ws://localhost:8081/ws/echo";
-      }
-      if (url) {
-        this.ws = new WebSocket(url);
-
-        // Event handlers
-        this.ws.onopen = () =>
-          console.log(`WebSocket connected: ${this.activeChat}`);
-        this.ws.onmessage = (event) => {
-          try {
-            const msg = JSON.parse(event.data);
-            if (this.activeChat === "echo") {
-              // In echo chat, add a 1 second delay to receive the echo response
-              setTimeout(() => {
-                this.activeMessages.push(msg);
-              }, 1000);
-            } else {
-              this.activeMessages.push(msg);
-            }
-          } catch (error) {
-            console.error("Error parsing JSON:", error);
-          }
-        };
-        this.ws.onerror = (error) => console.error("WebSocket error:", error);
-        this.ws.onclose = () => console.log("WebSocket closed");
-      }
-    },
-
-    disconnectWebSocket() {
-      if (this.ws) {
-        this.ws.close();
-        this.ws = null;
-      }
-    },
-
-    // Отправка сообщения через WS. Для echo-чата – также добавляем сообщение сразу в список.
-    sendMessage(msg) {
-      if (this.activeChat === "echo") {
-        // Показываем отправленное сообщение сразу в эхо-чате
-        this.activeMessages.push(msg);
-      }
-      if (this.ws && this.ws.readyState === WebSocket.OPEN) {
-        this.ws.send(JSON.stringify(msg));
-      } else {
-        console.error("WebSocket не открыт.");
-      }
-    },
-  },
-
-  beforeUnmount() {
-    this.disconnectWebSocket();
-  },
 };
+
+// Composables
+function useTheme() {
+  const isDarkTheme = ref(
+    JSON.parse(localStorage.getItem("isDarkTheme") || false)
+  );
+
+  const toggleTheme = () => {
+    isDarkTheme.value = !isDarkTheme.value;
+    localStorage.setItem("isDarkTheme", JSON.stringify(isDarkTheme.value));
+  };
+
+  return { isDarkTheme, toggleTheme };
+}
+
+function useMiddlePanel() {
+  const isMiddlePanelOpen = ref(
+    JSON.parse(localStorage.getItem("isMiddlePanelOpen") || false)
+  );
+
+  const toggleMiddlePanel = () => {
+    isMiddlePanelOpen.value = !isMiddlePanelOpen.value;
+    localStorage.setItem(
+      "isMiddlePanelOpen",
+      JSON.stringify(isMiddlePanelOpen.value)
+    );
+  };
+
+  return { isMiddlePanelOpen, toggleMiddlePanel };
+}
+
+function useChat() {
+  const activeChat = ref("");
+  const activeMessages = ref([]);
+  const { connect, disconnect, send } = useWebSocket();
+
+  watch(activeChat, (newChat) => {
+    if (newChat) {
+      connect(`ws://localhost:8081/ws/${newChat}`, handleMessage);
+    } else {
+      disconnect();
+    }
+  });
+
+  const handleMessage = (msg) => {
+    if (activeChat.value === "echo") {
+      setTimeout(() => activeMessages.value.push(msg), 1000);
+    } else {
+      activeMessages.value.push(msg);
+    }
+  };
+
+  const selectChat = (chatType) => {
+    if (activeChat.value === chatType) return;
+    activeChat.value = chatType;
+    activeMessages.value = [];
+  };
+
+  const closeChat = () => {
+    activeChat.value = "";
+    activeMessages.value = [];
+  };
+
+  const handleSendMessage = (msg) => {
+    if (activeChat.value === "echo") {
+      activeMessages.value.push(msg);
+    }
+    send(msg);
+  };
+
+  onBeforeUnmount(() => disconnect());
+
+  return {
+    activeChat,
+    activeMessages,
+    selectChat,
+    closeChat,
+    handleSendMessage,
+  };
+}
 </script>
