@@ -1,0 +1,11 @@
+.right-side-panel {
+  background: var(--secondary-dark);
+  backdrop-filter: blur(15px);
+  border-radius: 16px;
+  box-shadow: 0 4px 20px var(--dark-glass);
+  transition: var(--transition-default);
+  margin-top: 50px;
+  width: 200px;
+  text-align: center;
+  padding: 20px;
+}

@@ -6,11 +6,8 @@
   box-shadow: 0 4px 20px var(--dark-glass);
   transition: var(--transition-default);
   margin-top: 50px;
-}
-
-.middle-panel {
   width: 280px;
-  padding: 16px;
+  padding-top: 60px;
   opacity: 1;
   transform: translateX(0);
 
@@ -23,13 +20,17 @@
 }
 
 .middle-panel.closed {
-  width: 0;
-  opacity: 0;
-  transform: translateX(-20px);
-  padding: 0;
-  margin: 0;
+  width: 80px; /* Минимальная ширина */
+  opacity: 1; /* Оставляем видимой */
+  transform: translateX(0); /* Убираем смещение */
+  padding: 10px 0; /* Минимальные отступы */
 }
 
 .close-mid-btn {
-  display: none;
+  font-size: 1.4rem;
+  cursor: pointer;
+  color: var(--sidebar-text-light);
+  transition: var(--transition-default);
+  display: flex;
+  justify-content: center;
 }

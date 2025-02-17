@@ -3,17 +3,12 @@
   <div :class="['chat-container', { 'dark-theme': isDarkTheme }]">
     <!-- Main content container -->
     <div class="main-content">
-      <!-- Sidebar -->
-      <MainSidebar
-        :isDarkTheme="isDarkTheme"
-        @toggle-theme="toggleTheme"
-        @toggle-middle-panel="toggleMiddlePanel"
-      />
-
       <!-- MiddlePanel transmits the selected chat mode -->
       <MiddlePanel
         :isMiddleOpen="isMiddlePanelOpen"
         :activeChat="activeChat"
+        :isDarkTheme="isDarkTheme"
+        @toggle-theme="toggleTheme"
         @toggle-middle-panel="toggleMiddlePanel"
         @select-chat="selectChat"
         @close-chat="closeChat"
@@ -26,21 +21,24 @@
         @send-message="sendMessage"
         @toggle-middle-panel="toggleMiddlePanel"
       />
+
+      <RightSidePanel />
     </div>
   </div>
 </template>
 
 <script>
-import MainSidebar from "./MainSidebar.vue";
 import MiddlePanel from "./MiddlePanel.vue";
 import ChatBox from "./ChatBox.vue";
+import RightSidePanel from "./RightSidePanel.vue";
 
 export default {
   components: {
-    MainSidebar,
     MiddlePanel,
     ChatBox,
+    RightSidePanel,
   },
+
   data() {
     return {
       activeChat: "", // "general" или "echo", или пустая строка (чат не выбран)

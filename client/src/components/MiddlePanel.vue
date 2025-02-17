@@ -25,6 +25,19 @@
       <button v-if="activeChat" @click="closeChat" class="close-btn">
         × Закрыть чат
       </button>
+
+      <!-- Buttons inside the sidebar -->
+
+      <button
+        class="bi bi-chat-dots"
+        @click="$emit('toggle-middle-panel')"
+      ></button>
+      <button class="bi bi-gear"></button>
+
+      <!-- Theme toggle button -->
+      <button @click="$emit('toggle-theme')">
+        <h4 :class="isDarkTheme ? 'bi bi-sun' : 'bi bi-moon'"></h4>
+      </button>
     </div>
   </div>
 </template>
@@ -33,6 +46,7 @@
 export default {
   props: {
     isMiddleOpen: Boolean,
+    isDarkTheme: Boolean,
     activeChat: {
       type: String,
       default: "",

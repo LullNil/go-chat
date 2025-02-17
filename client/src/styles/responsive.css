@@ -88,13 +88,25 @@
     transform: translateY(-100%);
   }
 
+  .middle-panel.closed {
+    width: 0;
+    opacity: 0;
+    transform: translateX(-20px);
+    padding: 0;
+    margin: 0;
+  }
+
   .middle-panel:not(.closed) {
     transform: translateY(0);
+  }
+
+  .right-side-panel {
+    display: none;
   }
 }
 
 /* Wide screen adaptation */
-@media (min-width: 1300px) {
+@media (min-width: 1700px) {
   .sent {
     margin-left: 0%;
   }
