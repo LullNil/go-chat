@@ -1,6 +1,13 @@
 <template>
-  <!-- Dark theme -->
-  <div :class="['chat-container', { 'dark-theme': isDarkTheme }]">
+  <!-- Auth Form Overlay -->
+
+  <AuthForm v-if="!isAuthenticated" @login="handleLogin" />
+
+  <!-- Main Chat Interface -->
+  <div
+    v-show="isAuthenticated"
+    :class="['chat-container', { 'dark-theme': isDarkTheme }]"
+  >
     <!-- Main content container -->
     <div class="main-content">
       <!-- MiddlePanel transmits the selected chat mode -->
@@ -32,16 +39,21 @@
 import MiddlePanel from "./MiddlePanel.vue";
 import ChatBox from "./ChatBox.vue";
 import RightSidePanel from "./RightSidePanel.vue";
+import AuthForm from "./AuthForm.vue";
 
 export default {
   components: {
     MiddlePanel,
     ChatBox,
     RightSidePanel,
+    AuthForm,
   },
 
   data() {
     return {
+      isAuthenticated:
+        Boolean(localStorage.getItem("isAuthenticated")) || false,
+      showAuthForm: true, // Форма авторизации показывается при каждой загрузке страницы
       activeChat: "", // "general" или "echo", или пустая строка (чат не выбран)
       activeMessages: [],
       ws: null,
@@ -54,7 +66,19 @@ export default {
     };
   },
 
+  mounted() {
+    console.log("Initial auth state:", this.isAuthenticated);
+    window.addEventListener("storage", (e) => {
+      console.log("Storage event:", e.key, e.newValue);
+    });
+  },
+
   methods: {
+    handleLogin() {
+      this.isAuthenticated = true;
+      localStorage.setItem("isAuthenticated", "true");
+    },
+
     // Method toggleTheme switches between light and dark themes
     toggleTheme() {
       this.isDarkTheme = !this.isDarkTheme;
@@ -147,5 +171,23 @@ export default {
   beforeUnmount() {
     this.disconnectWebSocket();
   },
+
+  handleLogin() {
+    this.showAuthForm = false;
+  },
 };
 </script>
+
+<style scoped>
+/* Анимация появления */
+.auth-fade-enter-active,
+.auth-fade-leave-active {
+  transition: all 0.5s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.auth-fade-enter-from,
+.auth-fade-leave-to {
+  opacity: 0;
+  transform: scale(0.95);
+}
+</style>

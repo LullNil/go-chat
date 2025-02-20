@@ -7,7 +7,7 @@
         <button @click="$emit('toggle-middle-panel')" class="menu-toggle">
           <span class="bi bi-list"></span>
         </button>
-        <h2>Chat</h2>
+        <h2>{{ chatTitle }}</h2>
       </div>
 
       <!-- Область для сообщений -->
@@ -35,17 +35,12 @@
           @input="adjustTextareaHeight"
         ></textarea>
         <button class="btn-circle" @click="sendMessage()">
-          <svg
-            class="send-icon"
-            viewBox="0 0 24 24"
-            fill="none"
-            xmlns="http://www.w3.org/2000/svg"
-          >
+          <svg class="send-icon" viewBox="0 0 24 24" fill="none">
             <path
-              d="M6 12L3 21L21 12L3 3L6 12ZM6 12L12 12"
+              d="M5.74 15.75L3.5 20.5L20.5 12L3.5 3.5L5.74 8.25L12.5 12L5.74 15.75Z"
+              fill="currentColor"
               stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="round"
+              stroke-width="1.2"
               stroke-linejoin="round"
             />
           </svg>
@@ -77,6 +72,20 @@ export default {
     return {
       newMessage: "",
     };
+  },
+
+  computed: {
+    chatTitle() {
+      // Отображение заголовка в зависимости от выбранного чата
+      switch (this.activeChat) {
+        case "general":
+          return "Общий чат";
+        case "echo":
+          return "Эхо-чат";
+        default:
+          return "Чат";
+      }
+    },
   },
 
   watch: {
@@ -111,6 +120,13 @@ export default {
     addNewLine(event) {
       event.preventDefault();
       this.newMessage += "\n";
+
+      this.$nextTick(() => {
+        this.adjustTextareaHeight();
+        // Скроллим textarea так, чтобы курсор оставался видимым
+        const textarea = this.$refs.textarea;
+        textarea.scrollTop = textarea.scrollHeight;
+      });
     },
 
     adjustTextareaHeight() {

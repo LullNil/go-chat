@@ -1,4 +1,3 @@
-/* Variables: base styles and themes */
 :root {
   /* Light theme */
   --primary-light: #f7f9fc;
@@ -10,12 +9,22 @@
   --secondary-dark: #1e1e1e;
   --text-dark: #e0e0e0;
   --accent-blue: #5865f2;
+  --message-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 
   /* Glass effects */
   --glass-effect-light: rgba(255, 255, 255, 0.6);
   --glass-effect-dark: rgba(20, 20, 20, 0.85);
   --glass-effect: var(--glass-effect-light);
   --dark-glass: rgba(0, 0, 0, 0.5);
+
+  /* Gradient light-theme accents */
+  --gradient-sent-start: #1a73e8;
+  --gradient-sent-end: #4285f4;
+  --gradient-received-start: #f8f9fe;
+  --gradient-received-end: #e8eaf6;
+  --text-received-light: #2d3748;
+  --gradient-sent-border: rgba(255, 255, 255, 0.2);
+  --gradient-received-border: rgba(0, 0, 0, 0.08);
 
   /* Animations */
   --transition-default: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
@@ -34,4 +43,13 @@
   /* Dark theme variables */
   --glass-effect: var(--glass-effect-dark);
   --sidebar-bg: var(--sidebar-bg-dark);
+
+  /* Gradient dark-theme */
+  --gradient-sent-start: #7c3aed;
+  --gradient-sent-end: #9f7aea;
+  --gradient-received-start: #2d3748;
+  --gradient-received-end: #4a5568;
+  --text-received-dark: #edf2f7;
+  --gradient-sent-border: rgba(255, 255, 255, 0.15);
+  --gradient-received-border: rgba(255, 255, 255, 0.05);
 }

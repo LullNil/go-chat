@@ -1,11 +1,9 @@
-/* Main chat container window */
 .chat-container {
   position: fixed;
   top: 0;
   left: 0;
   width: 100vw;
   height: 100vh;
-  font-family: "Inter", sans-serif;
   padding: var(--outer-padding);
   box-sizing: border-box;
   background: var(--primary-light);
@@ -83,28 +81,48 @@
   gap: 4px;
   transition: all 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28);
   scroll-behavior: smooth;
+  transform-style: preserve-3d;
+  position: relative;
 }
 
 .chat-message {
-  padding: 10px 14px;
-  border-radius: 12px;
-  max-width: clamp(200px, 80%, 600px);
+  position: relative;
+  padding: 12px 16px;
+  border-radius: 14px;
+  max-width: min(80%, 600px);
+  width: fit-content;
   word-wrap: break-word;
   white-space: pre-wrap;
-  display: inline-block;
-  align-self: flex-start;
   line-height: 1.4;
   transform: scale(0.95);
-  transition: margin-left 0.8s ease-in-out;
+  transition: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  border: 1px solid transparent;
+  background-origin: border-box;
+  background-clip: padding-box, border-box;
+  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.1);
+  text-shadow: 0 1px 1px rgba(0, 0, 0, 0.05);
 }
 
 .chat-message p {
   margin: 0;
   text-align: left;
+  position: relative;
+  transition: transform 0.3s ease;
+}
+
+.dark-theme .chat-message p {
+  color: rgba(255, 255, 255, 0.92);
 }
 
 .sent {
-  background: #007bff;
+  background: linear-gradient(
+    180deg,
+    var(--gradient-sent-start),
+    var(--gradient-sent-end)
+  );
+  border: 1px solid var(--gradient-sent-border);
+  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.1),
+    inset 0 -1px 0 rgba(255, 255, 255, 0.1);
   color: white;
   margin-left: auto;
   animation: sendMessageAnimation 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28)
@@ -112,19 +130,38 @@
 }
 
 .received {
-  background: var(--secondary-light);
-  color: #333;
+  background: linear-gradient(
+    180deg,
+    var(--gradient-received-start),
+    var(--gradient-received-end)
+  );
+  border: 1px solid rgba(0, 0, 0, 0.05);
+  box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.05);
+  color: var(--text-received-light);
   animation: receiveMessageAnimation 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28)
     forwards;
 }
 
 .dark-theme .sent {
-  background: var(--accent-blue);
+  background: linear-gradient(
+    160deg,
+    var(--gradient-sent-start),
+    var(--gradient-sent-end)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  box-shadow: var(--message-shadow-dark),
+    inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
 .dark-theme .received {
-  background: #2a2a2a;
-  color: var(--text-dark);
+  color: var(--text-received-dark);
+  background: linear-gradient(
+    160deg,
+    var(--gradient-received-start),
+    var(--gradient-received-end)
+  );
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
 }
 
 /* Send message button styles */
@@ -154,24 +191,29 @@
 }
 
 .send-icon {
-  width: 24px;
-  height: 24px;
-  transition: transform 0.2s ease;
+  width: 22px;
+  height: 22px;
+  transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55),
+    opacity 0.2s ease;
 }
 
 .btn-circle:hover .send-icon {
   transform: translateX(2px);
 }
 
+.btn-circle:active .send-icon {
+  transform: rotate(-15deg) scale(0.9);
+}
+
 /* Dark theme adjustments */
 .dark-theme .btn-circle {
-  background: #5865f2;
+  background: #8b5cf6;
   color: white;
 }
 
 .dark-theme .btn-circle:hover {
-  background: #4752c4;
-  box-shadow: 0 4px 12px rgba(71, 82, 196, 0.25);
+  background: #6d3cdd;
+  box-shadow: 0 4px 12px #6c3cdd1f;
 }
 
 /* Input field */
@@ -179,6 +221,7 @@
   display: flex;
   gap: 8px;
   background: none;
+  align-items: flex-end;
 }
 
 .chat-input textarea {
@@ -200,5 +243,3 @@
 .dark-theme .chat-input {
   color: var(--text-dark);
 }
-
-
