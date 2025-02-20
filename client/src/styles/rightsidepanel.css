@@ -1,5 +1,5 @@
 .right-side-panel {
-  background: var(--secondary-dark);
+  background: var(--glass-effect);
   backdrop-filter: blur(15px);
   border-radius: 16px;
   box-shadow: 0 4px 20px var(--dark-glass);
@@ -8,4 +8,8 @@
   width: 200px;
   text-align: center;
   padding: 20px;
+}
+
+.dark-theme .right-side-panel {
+  background: var(--secondary-dark);
 }

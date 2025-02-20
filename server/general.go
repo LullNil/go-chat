@@ -67,10 +67,11 @@ func (gc *GeneralChat) Handle(w http.ResponseWriter, r *http.Request) {
 
 	// Remove the client upon disconnection.
 	gMutex.Lock()
+	nextClientID--
 	delete(generalClients, ws)
 	gMutex.Unlock()
 	ws.Close()
-	log.Println("General: client disconnected:", clientName)
+	log.Printf("General: %s disconnected", clientName)
 }
 
 // Broadcast listens for messages on the broadcast channel and sends each received message to all connected clients.

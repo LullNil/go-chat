@@ -1,4 +1,4 @@
-/* Middle panel */
+/* Основной контейнер панели */
 .middle-panel {
   background: var(--glass-effect);
   backdrop-filter: blur(15px);
@@ -7,12 +7,11 @@
   transition: var(--transition-default);
   margin-top: 50px;
   width: 280px;
-  padding-top: 60px;
+  padding-top: 10px;
   opacity: 1;
   transform: translateX(0);
-
-  /* Appear animation */
-  animation: var(--transition-default);
+  display: flex;
+  flex-direction: column;
 }
 
 .dark-theme .middle-panel {
@@ -20,17 +19,142 @@
 }
 
 .middle-panel.closed {
-  width: 80px; /* Минимальная ширина */
-  opacity: 1; /* Оставляем видимой */
-  transform: translateX(0); /* Убираем смещение */
-  padding: 10px 0; /* Минимальные отступы */
+  width: 80px;
+  opacity: 1;
+  transform: translateX(0);
+  padding: 10px 0;
 }
 
+/* Кнопка для закрытия панели */
 .close-mid-btn {
-  font-size: 1.4rem;
-  cursor: pointer;
+  font-size: 1.5rem;
   color: var(--sidebar-text-light);
   transition: var(--transition-default);
   display: flex;
   justify-content: center;
+}
+
+/* Стили списка чатов */
+.chat-list {
+  flex-grow: 1;
+  padding: 5px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  padding-top: 20px;
+}
+
+/* Стили для кнопок чатов */
+.chat-list button {
+  width: 100%; /* Кнопка занимает всю ширину контейнера */
+  padding: 12px 20px;
+  border: none;
+  border-radius: 10px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.4s ease, transform 0.4s ease;
+  color: var(--chat-text-color, #000); /* Цвет текста по умолчанию */
+}
+
+/* Эффект наведения – плавное появление фона с закруглёнными краями */
+.chat-list button:hover {
+  background-color: rgba(0, 0, 0, 0.07);
+}
+
+/* Изменение цвета текста для тёмной темы */
+.dark-theme .chat-list button {
+  color: #fff;
+}
+
+/* Для тёмной темы фон при наведении */
+.dark-theme .chat-list button:hover {
+  background-color: rgba(255, 255, 255, 0.15);
+}
+
+/* Состояние активного чата */
+.chat-list button.active {
+  background: #007bff;
+  color: #fff;
+}
+
+/* Минимизированная версия списка чатов */
+.chat-list-minimized {
+  flex-grow: 1;
+  padding: 20px;
+  display: flex;
+  flex-direction: column;
+  gap: 5px;
+  align-items: center;
+}
+
+.chat-list-minimized button {
+  width: 60px;
+  height: 60px;
+  border: none;
+  border-radius: 8px;
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 0.4s ease, transform 0.4s ease;
+  color: var(--chat-text-color, #000);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 1.5rem;
+}
+
+.dark-theme .chat-list-minimized button {
+  color: #fff;
+}
+
+.chat-list-minimized button:hover {
+  background-color: rgba(0, 0, 0, 0.1);
+}
+
+.dark-theme .chat-list-minimized button:hover {
+  background-color: rgba(255, 255, 255, 0.2);
+}
+
+.chat-list-minimized button.active {
+  background: #007bff;
+  color: #fff;
+}
+
+/* Фиксированная область внизу */
+.bottom-area {
+  margin-top: auto;
+  border-top: 1px solid rgba(0, 0, 0, 0.1);
+  padding: 10px;
+  display: flex;
+  justify-content: space-around;
+}
+
+/* Стили для кнопок в нижней области */
+.bottom-area button {
+  width: 40px;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: none;
+  border: none;
+  cursor: pointer;
+  font-size: 1.5rem;
+  color: var(--icon-color, #000);
+  transition: transform 0.3s ease, color 0.3s ease;
+}
+
+/* При тёмной теме – иконки становятся белыми */
+.dark-theme .bottom-area button {
+  color: #fff;
+}
+
+/* При наведении – плавное увеличение */
+.bottom-area button:hover {
+  transform: scale(1.1);
+  background: none;
+}
+
+/* При нажатии – плавное уменьшение */
+.bottom-area button:active {
+  transform: scale(0.95);
 }

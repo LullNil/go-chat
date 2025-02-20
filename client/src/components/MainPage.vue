@@ -20,6 +20,7 @@
         :activeChat="activeChat"
         @send-message="sendMessage"
         @toggle-middle-panel="toggleMiddlePanel"
+        @close-chat="closeChat"
       />
 
       <RightSidePanel />

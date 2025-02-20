@@ -34,7 +34,22 @@
           ref="textarea"
           @input="adjustTextareaHeight"
         ></textarea>
-        <button class="btn-circle" @click="sendMessage()">➤</button>
+        <button class="btn-circle" @click="sendMessage()">
+          <svg
+            class="send-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <path
+              d="M6 12L3 21L21 12L3 3L6 12ZM6 12L12 12"
+              stroke="currentColor"
+              stroke-width="1.5"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            />
+          </svg>
+        </button>
       </div>
     </div>
     <!-- Если чат не выбран, показываем placeholder -->
