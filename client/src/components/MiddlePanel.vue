@@ -42,8 +42,23 @@
     <div class="bottom-area" v-if="isMiddleOpen">
       <button class="bi bi-gear"></button>
       <button class="bi bi-person-circle"></button>
-      <button @click="$emit('toggle-theme')">
-        <span :class="isDarkTheme ? 'bi bi-sun' : 'bi bi-moon'"></span>
+      <button
+        class="theme-toggle"
+        @click="$emit('toggle-theme')"
+        aria-label="Переключить тему"
+      >
+        <svg
+          class="theme-icon"
+          :class="{ 'animate-icon': animateIcon }"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+        >
+          <path :d="isDarkTheme ? moonIcon : sunIcon" />
+        </svg>
       </button>
     </div>
   </div>
@@ -53,7 +68,21 @@
 export default {
   data() {
     return {
+      // Sun icon
+      sunIcon: `M12 3v1
+                m0 16v1
+                m9-9h-1
+                M4 12H3
+                m15.364-6.364l-.707.707
+                M6.343 17.657l-.707.707
+                m12.728 0l-.707-.707
+                M6.343 6.343l-.707-.707
+                M12 8a4 4 0 110 8 4 4 0 010-8z`,
+      // Moon icon
+      moonIcon: `M21 12.79A9 9 0 1111.21 3
+                 a7 7 0 009.79 9.79z`,
       showSettings: false,
+      animateIcon: false,
     };
   },
   props: {
@@ -64,6 +93,7 @@ export default {
       default: "",
     },
   },
+
   mounted() {
     // Слушатель для кнопок мыши. Значение e.button === 4 соответствует пятой кнопке (обычно "Forward").
     window.addEventListener("mouseup", this.handleMouseButton);

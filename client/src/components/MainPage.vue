@@ -1,7 +1,12 @@
 <template>
   <!-- Auth Form Overlay -->
 
-  <AuthForm v-if="!isAuthenticated" @login="handleLogin" />
+  <AuthForm
+    v-if="!isAuthenticated"
+    :isDarkTheme="isDarkTheme"
+    @toggle-theme="toggleTheme"
+    @login="handleLogin"
+  />
 
   <!-- Main Chat Interface -->
   <div
@@ -71,6 +76,8 @@ export default {
     window.addEventListener("storage", (e) => {
       console.log("Storage event:", e.key, e.newValue);
     });
+
+    document.documentElement.classList.toggle("dark-theme", this.isDarkTheme);
   },
 
   methods: {
@@ -83,6 +90,8 @@ export default {
     toggleTheme() {
       this.isDarkTheme = !this.isDarkTheme;
       localStorage.setItem("isDarkTheme", JSON.stringify(this.isDarkTheme));
+
+      document.documentElement.classList.toggle("dark-theme", this.isDarkTheme);
     },
 
     // Method toggleMiddlePanel toggles the visibility of the middle panel
