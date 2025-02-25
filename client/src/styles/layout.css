@@ -1,9 +1,8 @@
 /* Main container */
 .main-content {
   display: grid;
-  grid-template-columns: auto 1fr auto;
+  grid-template-columns: 1fr auto;
   height: 100%;
-  gap: 6px;
+  /* gap: 6px; */
   transition: var(--transition-default);
-  /* margin-left: 60px; */
 }
