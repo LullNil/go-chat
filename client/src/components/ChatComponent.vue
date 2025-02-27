@@ -2,71 +2,122 @@
   <div class="chat-area">
     <!-- Left Side Panel -->
     <div :class="['middle-panel', { closed: !isMiddleOpen }]">
-      <!-- Button to toggle panel visibility -->
-      <div class="close-mid-btn">
-        <span @click="toggleMiddlePanel" class="bi bi-list"></span>
-      </div>
+      <div v-if="isMiddleOpen" class="middle-panel-content">
+        <!-- Header section with title -->
+        <div class="chat-header" ref="chatHeader">
+          <div class="header-action" @click="toggleMiddlePanel">
+            <span class="close-mid-btn bi bi-list"></span>
+            <h3>Чаты</h3>
+          </div>
+        </div>
 
-      <!-- Full chat list when panel is open -->
-      <div v-if="isMiddleOpen" class="chat-list">
-        <button
-          @click="selectChat('general')"
-          :class="{ active: activeChat === 'general' }"
-        >
-          <i class="bi bi-people"></i> Общий чат
-        </button>
-        <button
-          @click="selectChat('echo')"
-          :class="{ active: activeChat === 'echo' }"
-        >
-          <i class="bi bi-broadcast"></i> Эхо-чат
-        </button>
-      </div>
+        <!-- Scrollable chat list area -->
+        <div class="chat-list-scroll custom-scroll" ref="chatListScroll">
+          <div class="chat-list">
+            <button
+              @click="selectChat('general')"
+              :class="{ active: activeChat === 'general' }"
+            >
+              <i class="bi bi-people"></i> Общий чат
+            </button>
+            <!-- Example buttons (can be replaced with v-for loop) -->
+            <button
+              v-for="n in 10"
+              :key="n"
+              @click="selectChat('echo')"
+              :class="{ active: activeChat === 'echo' }"
+            >
+              <i class="bi bi-broadcast"></i> Эхо-чат {{ n }}
+            </button>
+          </div>
+        </div>
 
-      <!-- Minimized chat list when panel is closed -->
-      <div v-else class="chat-list-minimized">
-        <button
-          @click="selectChat('general')"
-          :class="{ active: activeChat === 'general' }"
-        >
-          <i class="bi bi-people"></i>
-        </button>
-        <button
-          @click="selectChat('echo')"
-          :class="{ active: activeChat === 'echo' }"
-        >
-          <i class="bi bi-broadcast"></i>
-        </button>
-      </div>
+        <!-- Search block -->
+        <transition name="slide-up">
+          <div v-if="isSearchVisible" class="chat-search-toggle">
+            <input
+              ref="searchInput"
+              type="text"
+              v-model="searchQuery"
+              placeholder="Поиск по чатам..."
+            />
+          </div>
+        </transition>
 
-      <!-- Bottom area for settings and theme toggle -->
-      <div class="bottom-area" v-if="isMiddleOpen">
-        <button class="bi bi-gear"></button>
-        <button class="bi bi-person-circle"></button>
-        <button
-          class="theme-toggle"
-          @click="toggleTheme"
-          aria-label="Переключить тему"
-        >
-          <svg
-            class="theme-icon"
-            :class="{ 'animate-icon': animateIcon }"
-            viewBox="0 0 24 24"
-            fill="none"
-            stroke="currentColor"
-            stroke-width="2"
-            stroke-linecap="round"
-            stroke-linejoin="round"
+        <!-- Bottom panel with action buttons -->
+        <div class="bottom-area">
+          <button class="bi bi-gear"></button>
+          <button class="bi bi-person-circle"></button>
+          <button
+            class="theme-toggle"
+            @click="toggleTheme"
+            aria-label="Переключить тему"
           >
-            <path :d="isDarkTheme ? moonIcon : sunIcon" />
-          </svg>
-        </button>
+            <svg
+              class="theme-icon"
+              :class="{ 'animate-icon': animateIcon }"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+            >
+              <path :d="isDarkTheme ? moonIcon : sunIcon" />
+            </svg>
+          </button>
+          <!-- Button to toggle search visibility -->
+          <button
+            @click="toggleSearch"
+            aria-label="Поиск"
+            class="bi bi-search"
+          ></button>
+        </div>
+      </div>
+
+      <!-- Minimized panel version -->
+      <div v-else class="chat-list-minimized">
+        <!-- Header for collapsing/expanding, always visible -->
+        <div
+          class="minimized-header custom-scroll"
+          ref="minimizedHeader"
+          @click="toggleMiddlePanel"
+        >
+          <span class="close-mid-btn bi bi-list"></span>
+        </div>
+        <!-- Container with chat selection buttons (icons centered with scrolling enabled) -->
+        <div class="minimized-buttons custom-scroll" ref="minimizedButtons">
+          <button
+            @click="selectChat('general')"
+            :class="{ active: activeChat === 'general' }"
+          >
+            <i class="bi bi-people"></i>
+          </button>
+          <button
+            @click="selectChat('echo')"
+            :class="{ active: activeChat === 'echo' }"
+          >
+            <i class="bi bi-broadcast"></i>
+          </button>
+          <button
+            v-for="v in 15"
+            :key="v"
+            @click="selectChat('echo')"
+            :class="{ active: activeChat === 'echo' }"
+          >
+            <i class="bi bi-broadcast"></i>
+          </button>
+        </div>
       </div>
     </div>
 
     <!-- Chat Box -->
     <div class="chat-box">
-      <div v-if="activeChat" class="chat-messages custom-scroll">
+      <div
+        v-if="activeChat"
+        class="chat-messages custom-scroll"
+        ref="chatMessages"
+      >
         <div class="chat-title">
           <!-- Button for toggling panel on small screens -->
           <button @click="toggleMiddlePanel" class="menu-toggle">
@@ -75,7 +126,7 @@
           <h2>{{ chatTitle }}</h2>
         </div>
 
-        <!-- Message list -->
+        <!-- Messages list -->
         <div ref="chatContainer" class="chat-messages custom-scroll">
           <div
             v-for="(msg, index) in messages"
@@ -129,52 +180,81 @@ export default {
       required: true,
     },
   },
-
   data() {
     return {
-      // Chat state
-      activeChat: "", // "general" or "echo", either empty string (chat not selected)
+      activeChat: "",
       messages: [],
       ws: null,
       newMessage: "",
-
-      // Middle panel visibility (saves in localStorage)
       isMiddleOpen: localStorage.getItem("isMiddlePanelOpen")
         ? JSON.parse(localStorage.getItem("isMiddlePanelOpen"))
         : false,
-
-      // Icons for theme toggle
       sunIcon: `M12 3v1
-                  m0 16v1
-                  m9-9h-1
-                  M4 12H3
-                  m15.364-6.364l-.707.707
-                  M6.343 17.657l-.707.707
-                  m12.728 0l-.707-.707
-                  M6.343 6.343l-.707-.707
-                  M12 8a4 4 0 110 8 4 4 0 010-8z`,
+                m0 16v1
+                m9-9h-1
+                M4 12H3
+                m15.364-6.364l-.707.707
+                M6.343 17.657l-.707.707
+                m12.728 0l-.707-.707
+                M6.343 6.343l-.707-.707
+                M12 8a4 4 0 110 8 4 4 0 010-8z`,
       moonIcon: `M21 12.79A9 9 0 1111.21 3
-                   a7 7 0 009.79 9.79z`,
+                 a7 7 0 009.79 9.79z`,
       animateIcon: false,
+      isSearchVisible: false,
+      searchQuery: "",
     };
   },
-
   mounted() {
-    // Add event listeners for mouse and keyboard events
+    // Add global event listeners
     window.addEventListener("mouseup", this.handleMouseButton);
     window.addEventListener("keydown", this.handleKeyCombination);
-    // Apply theme on component mount
+
+    // Add scroll event listeners if refs exist
+    if (this.$refs.chatListScroll) {
+      this.$refs.chatListScroll.addEventListener(
+        "scroll",
+        this.handleChatListScroll
+      );
+    }
+    if (this.$refs.minimizedButtons) {
+      this.$refs.minimizedButtons.addEventListener(
+        "scroll",
+        this.handleMinimizedScroll
+      );
+    }
+
+    // Initialize scroll handlers to set shadow correctly
+    this.handleChatListScroll();
+    if (this.$refs.minimizedButtons) {
+      this.handleMinimizedScroll();
+    }
+
+    // Toggle dark theme based on prop
     document.documentElement.classList.toggle("dark-theme", this.isDarkTheme);
   },
-
   beforeUnmount() {
+    // Remove global event listeners
     window.removeEventListener("mouseup", this.handleMouseButton);
     window.removeEventListener("keydown", this.handleKeyCombination);
+
+    // Remove scroll event listeners if refs exist
+    if (this.$refs.chatListScroll) {
+      this.$refs.chatListScroll.removeEventListener(
+        "scroll",
+        this.handleChatListScroll
+      );
+    }
+    if (this.$refs.minimizedButtons) {
+      this.$refs.minimizedButtons.removeEventListener(
+        "scroll",
+        this.handleMinimizedScroll
+      );
+    }
+
     this.disconnectWebSocket();
   },
-
   computed: {
-    // Returns the chat title based on the active chat type
     chatTitle() {
       switch (this.activeChat) {
         case "general":
@@ -186,13 +266,11 @@ export default {
       }
     },
   },
-
   methods: {
-    // Switch between Dark and Light themes
+    // Emit event to toggle theme
     toggleTheme() {
       this.$emit("toggle-theme");
     },
-
     // Toggle visibility of the middle panel
     toggleMiddlePanel() {
       this.isMiddleOpen = !this.isMiddleOpen;
@@ -200,9 +278,35 @@ export default {
         "isMiddlePanelOpen",
         JSON.stringify(this.isMiddleOpen)
       );
-    },
 
-    // Select a chat mode and establish a new WebSocket connection
+      this.$nextTick(() => {
+        // Reinitialize scroll event listeners after toggling panel
+        if (this.$refs.chatListScroll) {
+          this.$refs.chatListScroll.addEventListener(
+            "scroll",
+            this.handleChatListScroll
+          );
+          this.handleChatListScroll();
+        }
+        if (this.$refs.minimizedButtons) {
+          this.$refs.minimizedButtons.addEventListener(
+            "scroll",
+            this.handleMinimizedScroll
+          );
+          this.handleMinimizedScroll();
+        }
+      });
+    },
+    // Toggle search input visibility
+    toggleSearch() {
+      this.isSearchVisible = !this.isSearchVisible;
+      if (this.isSearchVisible) {
+        this.$nextTick(() => {
+          this.$refs.searchInput.focus();
+        });
+      }
+    },
+    // Select a chat and initialize it
     selectChat(chatType) {
       if (this.activeChat === chatType) return;
       this.closeChat();
@@ -210,15 +314,13 @@ export default {
       this.messages = [];
       this.connectWebSocket();
     },
-
-    // Close the current chat: disconnect WS and clear messages
+    // Close the current chat
     closeChat() {
       this.disconnectWebSocket();
       this.activeChat = "";
       this.messages = [];
     },
-
-    // Establish a WebSocket connection based on the active chat
+    // Connect to the WebSocket for the selected chat
     connectWebSocket() {
       let url = "";
       if (this.activeChat === "general") {
@@ -228,28 +330,21 @@ export default {
       }
       if (url) {
         this.ws = new WebSocket(url);
-
-        // WebSocket open event handler
         this.ws.onopen = () => {
           console.log(`WebSocket connected: ${this.activeChat}`);
         };
-
-        // WebSocket message event: parse and add message to the list
         this.ws.onmessage = (event) => {
           try {
             const msg = JSON.parse(event.data);
             if (this.activeChat === "echo") {
-              // For echo chat, add a delay before displaying the received message
               setTimeout(() => {
                 this.messages.push(msg);
-                // Auto-scroll to the new message after it is rendered
                 this.$nextTick(() => {
                   this.scrollToBottom();
                 });
               }, 1000);
             } else {
               this.messages.push(msg);
-              // Auto-scroll for received message
               this.$nextTick(() => {
                 this.scrollToBottom();
               });
@@ -258,27 +353,22 @@ export default {
             console.error("Error parsing JSON:", error);
           }
         };
-
         this.ws.onerror = (error) => console.error("WebSocket error:", error);
         this.ws.onclose = () => console.log("WebSocket closed");
       }
     },
-
-    // Disconnect the current WebSocket connection if it exists
+    // Disconnect from the WebSocket
     disconnectWebSocket() {
       if (this.ws) {
         this.ws.close();
         this.ws = null;
       }
     },
-
-    // Send a message via WebSocket and update the UI accordingly
+    // Handle sending a message
     handleSendMessage() {
       if (!this.newMessage.trim()) return;
       const msg = { user: "Вы", text: this.newMessage };
-
       if (this.activeChat === "echo") {
-        // Immediately display the sent message in echo chat
         this.messages.push(msg);
       }
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
@@ -292,8 +382,7 @@ export default {
         this.adjustTextareaHeight();
       });
     },
-
-    // Add a new line in the textarea on Ctrl+Enter
+    // Add a new line in the textarea
     addNewLine(event) {
       event.preventDefault();
       this.newMessage += "\n";
@@ -305,8 +394,7 @@ export default {
         }
       });
     },
-
-    // Dynamically adjust the textarea height based on its content
+    // Adjust the height of the textarea based on content
     adjustTextareaHeight() {
       const textarea = this.$refs.textarea;
       if (textarea) {
@@ -314,24 +402,33 @@ export default {
         textarea.style.height = `${Math.min(textarea.scrollHeight, 150)}px`;
       }
     },
-
-    // Scroll the chat container to the bottom
+    // Scroll chat container to the bottom
     scrollToBottom() {
       const chatContainer = this.$refs.chatContainer;
       if (chatContainer) {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
     },
-
-    // Handle mouse button events (e.g., кнопка "Назад" для закрытия чата)
+    // Handle scroll event for chat list to toggle header shadow
+    handleChatListScroll() {
+      if (!this.$refs.chatListScroll) return;
+      const scrollTop = this.$refs.chatListScroll.scrollTop;
+      this.$refs.chatHeader?.classList.toggle("scrolled", scrollTop > 0);
+    },
+    // Handle scroll event for minimized buttons to toggle header shadow
+    handleMinimizedScroll() {
+      if (!this.$refs.minimizedButtons) return;
+      const scrollTop = this.$refs.minimizedButtons.scrollTop;
+      this.$refs.minimizedHeader?.classList.toggle("scrolled", scrollTop > 0);
+    },
+    // Close chat on mouse button event (e.g., middle click)
     handleMouseButton(e) {
       if (e.button === 3) {
         e.preventDefault();
         this.closeChat();
       }
     },
-
-    // Handle key combination (Ctrl+Shift+X) to close the chat
+    // Close chat on specific key combination (Ctrl+Shift+X)
     handleKeyCombination(e) {
       if (e.ctrlKey && e.shiftKey && e.code === "KeyX") {
         e.preventDefault();
@@ -343,17 +440,15 @@ export default {
 </script>
 
 <style>
-/* Import original styles to preserve layout and appearance */
 @import "@/styles/chat.css";
 @import "@/styles/midpanel.css";
 
-/* Additional styling for combined component */
 .chat-area {
   display: flex;
   flex: 1;
   gap: 8px;
   height: 100%;
   overflow-y: auto;
-  /* scroll-behavior: smooth; */
+  overflow: hidden;
 }
 </style>

@@ -11,7 +11,7 @@ const stateFile = path.join(app.getPath("userData"), "window-state.json");
 // Default window state
 let windowState = {
   width: 980,
-  height: 780,
+  height: 800,
 };
 
 // If the state file exists, read the saved window state

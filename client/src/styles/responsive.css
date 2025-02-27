@@ -1,3 +1,5 @@
+@import "@/styles/authpage.css";
+
 /* Mobile adaptation */
 @media (max-width: 768px) {
   .main-content {
@@ -105,8 +107,6 @@
   }
 
   /* Auth page adaptation */
-  @import "@/styles/authpage.css";
-
   .error-message {
     display: none;
   }
@@ -264,11 +264,70 @@
     box-shadow: none;
     border-radius: 0;
   }
+
+  .middle-panel {
+    backdrop-filter: none;
+    border: none;
+    box-shadow: none;
+  }
+
+  .dark-theme .chat-list button:hover {
+    background-color: rgba(255, 255, 255, 0.05);
+  }
+
+  .bottom-area {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .bottom-area button {
+    width: 40px !important;
+    height: 40px !important;
+    background: transparent !important;
+    box-shadow: none !important;
+    transform: none !important;
+    margin-top: 0 !important;
+  }
+
+  .dark-theme .bottom-area {
+    background: transparent !important;
+  }
+
+  .dark-theme .bottom-area button:hover {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .close-mid-btn {
+    padding-bottom: 15px !important;
+  }
+
+  .chat-list button.active,
+  .dark-theme .chat-list button.active {
+    background: none !important;
+  }
 }
 
 /* Wide screen adaptation */
 @media (min-width: 1700px) {
   .sent {
     margin-left: 0%;
+  }
+}
+
+/* For touch-screen devices */
+@media (max-width: 768px) and (hover: none) and (pointer: coarse) {
+  /* Disable hover effects for send message btn */
+  .btn-circle:hover {
+    transform: none;
+    box-shadow: none;
+  }
+
+  .middle-panel,
+  .chat-list button,
+  .chat-list-minimized button,
+  .bottom-area button {
+    transition: none !important;
+    animation: none !important;
   }
 }

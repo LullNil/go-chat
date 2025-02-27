@@ -29,7 +29,7 @@
   color: #fff;
 }
 .dark-theme .mode-toggle {
-  color: var(--gradient-sent-end);
+  color: var(--gradient-received-start);
 }
 
 /* Footer styles */
@@ -57,7 +57,7 @@
   transition: color 0.5s ease;
 }
 .dark-theme .forgot-password {
-  color: var(--text-light);
+  color: var(--text-dark);
 }
 
 /* Smooth appearance for extra fields with a "jelly" effect */
@@ -131,7 +131,7 @@
 .auth-input:not(:placeholder-shown) ~ .auth-input-label {
   top: 0;
   font-size: 0.875rem;
-  color: var(--gradient-sent-end);
+  color: var(--gradient-sent-start);
 }
 .error-label {
   color: #ff4f4f;
@@ -362,6 +362,14 @@
 .auth-button:hover {
   transform: translateY(-2px);
   box-shadow: 0 4px 12px rgba(88, 101, 242, 0.25);
+}
+
+.dark-theme .auth-button {
+  background: var(--gradient-received-start);
+}
+.dark-theme .auth-button:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px var(--gradient-sent-end);
 }
 
 .mobile-error-message {
