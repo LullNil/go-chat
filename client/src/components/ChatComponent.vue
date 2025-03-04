@@ -1,17 +1,52 @@
 <template>
   <div class="chat-area">
-    <!-- Left Side Panel -->
-    <div :class="['middle-panel', { closed: !isMiddleOpen }]">
+    <!-- Side Panel -->
+    <div
+      ref="middlePanel"
+      class="middle-panel"
+      :class="{ closed: !isMiddleOpen, resizing: isResizing }"
+      :style="{ width: isMiddleOpen ? panelWidth + 'px' : '80px' }"
+    >
+      <!-- Resize Handle: Right edge of the panel -->
+      <div
+        class="resize-handle"
+        :class="{ active: isResizing }"
+        @mousedown="initResize"
+      ></div>
+
+      <!-- Expanded panel content -->
       <div v-if="isMiddleOpen" class="middle-panel-content">
-        <!-- Header section with title -->
+        <!-- Header section -->
         <div class="chat-header" ref="chatHeader">
           <div class="header-action" @click="toggleMiddlePanel">
             <span class="close-mid-btn bi bi-list"></span>
-            <h3>Чаты</h3>
+            <h3 :class="{ 'search-active': isSearchActive }">Чаты</h3>
+          </div>
+
+          <!-- Search Container -->
+          <div class="search-container" :class="{ active: isSearchActive }">
+            <input
+              ref="searchInput"
+              type="text"
+              class="search-input"
+              placeholder="Поиск чатов"
+              v-model="searchQuery"
+            />
+            <div
+              class="search-icon-wrapper"
+              @click="toggleSearch"
+              :class="{ active: isSearchActive }"
+            >
+              <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
+                <path
+                  d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z"
+                />
+              </svg>
+            </div>
           </div>
         </div>
 
-        <!-- Scrollable chat list area -->
+        <!-- Chat list scroll area -->
         <div class="chat-list-scroll custom-scroll" ref="chatListScroll">
           <div class="chat-list">
             <button
@@ -20,7 +55,7 @@
             >
               <i class="bi bi-people"></i> Общий чат
             </button>
-            <!-- Example buttons (can be replaced with v-for loop) -->
+            <!-- Example chat buttons -->
             <button
               v-for="n in 10"
               :key="n"
@@ -31,18 +66,6 @@
             </button>
           </div>
         </div>
-
-        <!-- Search block -->
-        <transition name="slide-up">
-          <div v-if="isSearchVisible" class="chat-search-toggle">
-            <input
-              ref="searchInput"
-              type="text"
-              v-model="searchQuery"
-              placeholder="Поиск по чатам..."
-            />
-          </div>
-        </transition>
 
         <!-- Bottom panel with action buttons -->
         <div class="bottom-area">
@@ -66,18 +89,11 @@
               <path :d="isDarkTheme ? moonIcon : sunIcon" />
             </svg>
           </button>
-          <!-- Button to toggle search visibility -->
-          <button
-            @click="toggleSearch"
-            aria-label="Поиск"
-            class="bi bi-search"
-          ></button>
         </div>
       </div>
 
       <!-- Minimized panel version -->
       <div v-else class="chat-list-minimized">
-        <!-- Header for collapsing/expanding, always visible -->
         <div
           class="minimized-header custom-scroll"
           ref="minimizedHeader"
@@ -85,7 +101,6 @@
         >
           <span class="close-mid-btn bi bi-list"></span>
         </div>
-        <!-- Container with chat selection buttons (icons centered with scrolling enabled) -->
         <div class="minimized-buttons custom-scroll" ref="minimizedButtons">
           <button
             @click="selectChat('general')"
@@ -119,22 +134,24 @@
         ref="chatMessages"
       >
         <div class="chat-title">
-          <!-- Button for toggling panel on small screens -->
+          <!-- Button to toggle panel on small screens -->
           <button @click="toggleMiddlePanel" class="menu-toggle">
             <span class="bi bi-list"></span>
           </button>
           <h2>{{ chatTitle }}</h2>
         </div>
 
-        <!-- Messages list -->
-        <div ref="chatContainer" class="chat-messages custom-scroll">
-          <div
-            v-for="(msg, index) in messages"
-            :key="index"
-            class="chat-message"
-            :class="msg.user === 'Вы' ? 'sent' : 'received'"
-          >
-            <p class="chat-text">{{ msg.text }}</p>
+        <!-- Message list -->
+        <div ref="chatContainer" class="chat-messages chat-scroll">
+          <div class="messages-inner">
+            <div
+              v-for="(msg, index) in messages"
+              :key="index"
+              class="chat-message"
+              :class="msg.user === 'Вы' ? 'sent' : 'received'"
+            >
+              <p class="chat-text">{{ msg.text }}</p>
+            </div>
           </div>
         </div>
 
@@ -163,7 +180,7 @@
           </button>
         </div>
       </div>
-      <!-- Placeholder when no chat is selected -->
+      <!-- Placeholder if no chat is selected -->
       <div v-else class="chat-placeholder">
         <p>Выберите чат для начала общения</p>
       </div>
@@ -180,15 +197,21 @@ export default {
       required: true,
     },
   },
+
   data() {
     return {
       activeChat: "",
       messages: [],
       ws: null,
       newMessage: "",
-      isMiddleOpen: localStorage.getItem("isMiddlePanelOpen")
-        ? JSON.parse(localStorage.getItem("isMiddlePanelOpen"))
-        : false,
+      // Panel width is stored in localStorage and determines expansion.
+      panelWidth: localStorage.getItem("panelWidth")
+        ? Number(localStorage.getItem("panelWidth"))
+        : 280,
+      // Last expanded width to restore when expanding from minimized state
+      lastExpandedWidth: 280,
+      // Flag to track the resizing process
+      isResizing: false,
       sunIcon: `M12 3v1
                 m0 16v1
                 m9-9h-1
@@ -201,16 +224,35 @@ export default {
       moonIcon: `M21 12.79A9 9 0 1111.21 3
                  a7 7 0 009.79 9.79z`,
       animateIcon: false,
-      isSearchVisible: false,
+      isSearchActive: false,
       searchQuery: "",
+      // Define thresholds
+      SNAP_THRESHOLD: 240,
+      MIN_THRESHOLD: 120,
     };
   },
-  mounted() {
-    // Add global event listeners
-    window.addEventListener("mouseup", this.handleMouseButton);
-    window.addEventListener("keydown", this.handleKeyCombination);
 
-    // Add scroll event listeners if refs exist
+  computed: {
+    isMiddleOpen() {
+      return this.panelWidth > this.MIN_THRESHOLD;
+    },
+    // Returns chat title based on active chat
+    chatTitle() {
+      switch (this.activeChat) {
+        case "general":
+          return "Общий чат";
+        case "echo":
+          return "Эхо-чат";
+        default:
+          return "Чат";
+      }
+    },
+  },
+
+  mounted() {
+    // Global event listeners
+    window.addEventListener("keydown", this.handleKeyCombination);
+    window.addEventListener("mousedown", this.handleMouseButton); // Для закрытия чата кнопкой мыши 3
     if (this.$refs.chatListScroll) {
       this.$refs.chatListScroll.addEventListener(
         "scroll",
@@ -223,22 +265,19 @@ export default {
         this.handleMinimizedScroll
       );
     }
-
-    // Initialize scroll handlers to set shadow correctly
     this.handleChatListScroll();
     if (this.$refs.minimizedButtons) {
       this.handleMinimizedScroll();
     }
-
-    // Toggle dark theme based on prop
     document.documentElement.classList.toggle("dark-theme", this.isDarkTheme);
   },
+
   beforeUnmount() {
     // Remove global event listeners
-    window.removeEventListener("mouseup", this.handleMouseButton);
+    window.removeEventListener("mousemove", this.onResize);
+    window.removeEventListener("mouseup", this.stopResize);
     window.removeEventListener("keydown", this.handleKeyCombination);
-
-    // Remove scroll event listeners if refs exist
+    window.removeEventListener("mousedown", this.handleMouseButton);
     if (this.$refs.chatListScroll) {
       this.$refs.chatListScroll.removeEventListener(
         "scroll",
@@ -251,36 +290,85 @@ export default {
         this.handleMinimizedScroll
       );
     }
-
     this.disconnectWebSocket();
   },
-  computed: {
-    chatTitle() {
-      switch (this.activeChat) {
-        case "general":
-          return "Общий чат";
-        case "echo":
-          return "Эхо-чат";
-        default:
-          return "Чат";
+
+  methods: {
+    initResize(e) {
+      // Prevent default behavior and start resizing
+      e.preventDefault();
+      this.isResizing = true;
+      // Disable text selection for smoother UX
+      document.body.style.userSelect = "none";
+      window.addEventListener("mousemove", this.onResize);
+      window.addEventListener("mouseup", this.stopResize);
+    },
+    onResize(e) {
+      if (!this.isResizing) return;
+      const panelRect = this.$refs.middlePanel.getBoundingClientRect();
+      const newWidth = e.clientX - panelRect.left;
+      if (newWidth < this.MIN_THRESHOLD) {
+        // If dragged below MIN_THRESHOLD, set minimized width
+        this.panelWidth = 80;
+      } else {
+        // If newWidth is between MIN_THRESHOLD and SNAP_THRESHOLD, hold the panel at SNAP_THRESHOLD;
+        // otherwise, update freely.
+        this.panelWidth =
+          newWidth < this.SNAP_THRESHOLD ? this.SNAP_THRESHOLD : newWidth;
+        this.lastExpandedWidth = this.panelWidth;
       }
     },
-  },
-  methods: {
-    // Emit event to toggle theme
+    stopResize() {
+      if (this.isResizing) {
+        this.isResizing = false;
+        document.body.style.userSelect = "auto";
+        window.removeEventListener("mousemove", this.onResize);
+        window.removeEventListener("mouseup", this.stopResize);
+        localStorage.setItem("panelWidth", this.panelWidth);
+
+        this.$nextTick(() => {
+          const handleScrollUpdate = () => {
+            this.handleMinimizedScroll();
+            this.handleChatListScroll();
+          };
+
+          const initScrollHandler = (ref, handler) => {
+            if (ref && !ref._scrollHandlerAttached) {
+              ref.addEventListener("scroll", handler);
+              ref._scrollHandlerAttached = true;
+            }
+          };
+
+          initScrollHandler(this.$refs.minimizedButtons, handleScrollUpdate);
+          initScrollHandler(this.$refs.chatListScroll, handleScrollUpdate);
+
+          handleScrollUpdate();
+        });
+      }
+    },
+
+    // Close chat on mouse button 3 (applied globally)
+    handleMouseButton(e) {
+      if (e.button === 3) {
+        e.preventDefault();
+        this.closeChat();
+      }
+    },
     toggleTheme() {
       this.$emit("toggle-theme");
     },
-    // Toggle visibility of the middle panel
     toggleMiddlePanel() {
-      this.isMiddleOpen = !this.isMiddleOpen;
-      localStorage.setItem(
-        "isMiddlePanelOpen",
-        JSON.stringify(this.isMiddleOpen)
-      );
-
+      // Toggle panel expansion: if expanded, save current width and minimize;
+      // if minimized, restore last expanded width.
+      if (this.isMiddleOpen) {
+        this.lastExpandedWidth = this.panelWidth;
+        this.panelWidth = 80;
+      } else {
+        this.panelWidth = this.lastExpandedWidth || 280;
+      }
+      localStorage.setItem("panelWidth", this.panelWidth);
+      // Reinitialize header shadow logic after toggling panel state
       this.$nextTick(() => {
-        // Reinitialize scroll event listeners after toggling panel
         if (this.$refs.chatListScroll) {
           this.$refs.chatListScroll.addEventListener(
             "scroll",
@@ -299,8 +387,8 @@ export default {
     },
     // Toggle search input visibility
     toggleSearch() {
-      this.isSearchVisible = !this.isSearchVisible;
-      if (this.isSearchVisible) {
+      this.isSearchActive = !this.isSearchActive;
+      if (this.isSearchActive) {
         this.$nextTick(() => {
           this.$refs.searchInput.focus();
         });
@@ -374,7 +462,7 @@ export default {
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify(msg));
       } else {
-        console.error("WebSocket не открыт.");
+        console.error("WebSocket is not open.");
       }
       this.newMessage = "";
       this.$nextTick(() => {
@@ -409,26 +497,31 @@ export default {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
     },
-    // Handle scroll event for chat list to toggle header shadow
+    // Method to update header shadow for expanded panel
     handleChatListScroll() {
       if (!this.$refs.chatListScroll) return;
       const scrollTop = this.$refs.chatListScroll.scrollTop;
       this.$refs.chatHeader?.classList.toggle("scrolled", scrollTop > 0);
     },
-    // Handle scroll event for minimized buttons to toggle header shadow
+    // Method to update header shadow for minimized panel
     handleMinimizedScroll() {
       if (!this.$refs.minimizedButtons) return;
       const scrollTop = this.$refs.minimizedButtons.scrollTop;
+      const header = this.$refs.minimizedHeader;
       this.$refs.minimizedHeader?.classList.toggle("scrolled", scrollTop > 0);
-    },
-    // Close chat on mouse button event (e.g., middle click)
-    handleMouseButton(e) {
-      if (e.button === 3) {
-        e.preventDefault();
-        this.closeChat();
+
+      if (header) {
+        header.classList.toggle("scrolled", scrollTop > 0);
+
+        // Добавьте анимацию для плавного появления тени
+        if (scrollTop > 0) {
+          header.style.boxShadow = "0 4px 8px -2px rgba(0, 0, 0, 0.25)";
+        } else {
+          header.style.boxShadow = "none";
+        }
       }
     },
-    // Close chat on specific key combination (Ctrl+Shift+X)
+    // Method to handle key combinations
     handleKeyCombination(e) {
       if (e.ctrlKey && e.shiftKey && e.code === "KeyX") {
         e.preventDefault();
@@ -442,13 +535,4 @@ export default {
 <style>
 @import "@/styles/chat.css";
 @import "@/styles/midpanel.css";
-
-.chat-area {
-  display: flex;
-  flex: 1;
-  gap: 8px;
-  height: 100%;
-  overflow-y: auto;
-  overflow: hidden;
-}
 </style>

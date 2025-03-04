@@ -13,7 +13,7 @@
     :class="['chat-container', { 'dark-theme': isDarkTheme }]"
   >
     <div class="main-content">
-      <!-- Combined Chat Component (объединяет MiddlePanel и ChatBox с логикой WS) -->
+      <!-- Combined Chat Component -->
       <ChatComponent :isDarkTheme="isDarkTheme" @toggle-theme="toggleTheme" />
     </div>
   </div>

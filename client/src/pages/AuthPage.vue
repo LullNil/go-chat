@@ -9,7 +9,7 @@
     </transition>
 
     <!-- Logo in the bottom-left corner -->
-    <div class="logo-corner">&laquo;GoChat©&raquo; 2025</div>
+    <div class="logo-corner">© &laquo;GoChat&raquo; 2025</div>
 
     <!-- Theme switch button in the bottom-right corner -->
     <button

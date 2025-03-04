@@ -40,14 +40,14 @@
 .dark-theme {
   --primary-dark: #191A1B;
   --secondary-dark: #232526;
-  --text-dark: #C8CDD1;
+  --text-dark: #e0e0e0;
   --accent-color: #2E8B57;
   --glass-effect: var(--glass-effect-dark);
 
-  --gradient-sent-start: #3A506B;
-  --gradient-sent-end: #2E3B54;
-  --gradient-received-start: #415A77;
-  --gradient-received-end: #364A6E;
+  --gradient-sent-start: #647a91;
+  --gradient-sent-end: #556a81;
+  --gradient-received-start: #4e5a6a;
+  --gradient-received-end: #3e4a5a;
   --text-received-dark: #C7CCD1;
   --gradient-sent-border: rgba(255, 255, 255, 0.12);
   --gradient-received-border: rgba(255, 255, 255, 0.04);
