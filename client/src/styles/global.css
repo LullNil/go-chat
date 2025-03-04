@@ -6,6 +6,14 @@
   box-sizing: border-box;
 }
 
+*:focus {
+  outline: none !important;
+}
+
+button {
+  user-select: none;
+}
+
 html,
 body {
   width: 100%;

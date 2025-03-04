@@ -213,6 +213,8 @@
   color: white;
   margin-left: 8px;
   margin-right: 4px;
+  outline: none !important;
+  box-shadow: none !important;
 }
 .btn-circle:hover {
   transform: scale(1.05);
@@ -252,6 +254,8 @@
   z-index: 10;
   padding: 0 3px;
   background: none;
+  margin-top: -4px;
+  /* margin-bottom: 4px; */
 }
 .chat-input textarea {
   font-size: 16px;
@@ -275,7 +279,7 @@ textarea::selection {
 }
 .dark-theme .chat-input {
   color: var(--text-dark);
-  background: var(--secondary-dark);
+  background: none;
 }
 .dark-theme .chat-input textarea {
   color: var(--text-dark);

@@ -266,9 +266,14 @@
   }
 
   .middle-panel {
-    backdrop-filter: none;
-    border: none;
-    box-shadow: none;
+    width: 100vw !important;
+    height: 100vh !important;
+    margin-top: 0 !important;
+  }
+
+  .dropdown-menu {
+    width: 80%;
+    max-width: 280px;
   }
 
   .dark-theme .chat-list button:hover {
@@ -276,21 +281,33 @@
   }
 
   .bottom-area {
-    background: transparent !important;
-    box-shadow: none !important;
+    flex: 0 0 auto;
+    height: 47px;
+    display: flex;
+    justify-content: space-evenly;
+    align-items: center;
+    position: relative;
+    transition: all 0.3s ease;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
   }
-
   .bottom-area button {
-    width: 40px !important;
-    height: 40px !important;
-    background: transparent !important;
-    box-shadow: none !important;
-    transform: none !important;
-    margin-top: 0 !important;
+    width: 56px;
+    height: 56px;
+    font-size: 1.4rem !important;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: none;
+    border-radius: 14px;
+    border: none;
+    cursor: pointer;
+    transition: 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    color: rgba(0, 0, 0, 0.8);
   }
 
   .dark-theme .bottom-area {
     background: transparent !important;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
   }
 
   .dark-theme .bottom-area button:hover {

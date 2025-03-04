@@ -29,7 +29,7 @@
               ref="searchInput"
               type="text"
               class="search-input"
-              placeholder="Поиск чатов"
+              placeholder="Поиск"
               v-model="searchQuery"
             />
             <div
@@ -43,6 +43,44 @@
                 />
               </svg>
             </div>
+          </div>
+
+          <div
+            class="plus-icon-wrapper"
+            :class="{ active: isMenuOpen }"
+            @click="toggleMenu"
+          >
+            <svg class="plus-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
+            </svg>
+
+            <!-- Dropdown Menu -->
+            <div class="dropdown-menu-mid" :class="{ active: isMenuOpen }">
+              <div
+                class="menu-item"
+                v-for="(item, index) in menuItems"
+                :key="index"
+                @click.stop="handleMenuItemClick(item)"
+              >
+                <i :class="item.icon"></i>
+                <span>{{ item.label }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="categories-container" ref="categoriesContainer">
+          <div class="categories-scroll" @wheel="handleCategoriesScroll">
+            <button
+              class="category-btn"
+              v-for="(category, index) in categories"
+              :key="index"
+              :class="{ active: activeCategory === index }"
+              @mousedown.prevent
+              @click="selectCategory(index)"
+            >
+              {{ category }}
+            </button>
           </div>
         </div>
 
@@ -226,6 +264,27 @@ export default {
       animateIcon: false,
       isSearchActive: false,
       searchQuery: "",
+      isMenuOpen: false,
+      menuItems: [
+        {
+          icon: "bi bi-person-plus",
+          label: "Профиль",
+          key: "profile",
+        },
+        {
+          icon: "bi bi-palette",
+          label: "Тема",
+          key: "theme",
+          action: this.toggleTheme,
+        },
+        {
+          icon: "bi bi-gear",
+          label: "Настройки",
+          key: "settings",
+        },
+      ],
+      activeCategory: 0,
+      categories: ["Все", "Личные", "Группы", "Архив", "Избранное"],
       // Define thresholds
       SNAP_THRESHOLD: 240,
       MIN_THRESHOLD: 120,
@@ -354,6 +413,29 @@ export default {
         this.closeChat();
       }
     },
+
+    handleMenuItemClick(item) {
+      if (item.action) {
+        item.action();
+      }
+      // Закрываем меню только для определенных действий
+      if (!["theme"].includes(item.key)) {
+        this.isMenuOpen = false;
+      }
+    },
+
+    handleCategoriesScroll(e) {
+      const container = this.$refs.categoriesContainer;
+      if (container) {
+        container.scrollLeft += e.deltaY;
+      }
+    },
+
+    selectCategory(index) {
+      this.activeCategory = index;
+      // Дополнительная логика фильтрации чатов
+    },
+
     toggleTheme() {
       this.$emit("toggle-theme");
     },
@@ -393,6 +475,9 @@ export default {
           this.$refs.searchInput.focus();
         });
       }
+    },
+    toggleMenu() {
+      this.isMenuOpen = !this.isMenuOpen;
     },
     // Select a chat and initialize it
     selectChat(chatType) {
@@ -497,12 +582,17 @@ export default {
         chatContainer.scrollTop = chatContainer.scrollHeight;
       }
     },
+
     // Method to update header shadow for expanded panel
     handleChatListScroll() {
-      if (!this.$refs.chatListScroll) return;
+      if (!this.$refs.chatListScroll || !this.$refs.categoriesContainer) return;
       const scrollTop = this.$refs.chatListScroll.scrollTop;
-      this.$refs.chatHeader?.classList.toggle("scrolled", scrollTop > 0);
+      this.$refs.categoriesContainer.classList.toggle(
+        "scrolled",
+        scrollTop > 0
+      );
     },
+
     // Method to update header shadow for minimized panel
     handleMinimizedScroll() {
       if (!this.$refs.minimizedButtons) return;

@@ -58,6 +58,8 @@
   align-items: center;
   justify-content: center;
   color: inherit;
+  outline: none !important;
+  box-shadow: none !important;
 }
 
 .window-button svg {
