@@ -1,3 +1,5 @@
+/* variables.css */
+
 /* Light Theme Variables */
 :root {
   --primary-light: #f7f9fc;
@@ -15,11 +17,14 @@
   --dark-glass: rgba(0, 0, 0, 0.5);
 
   /* Gradient Accents (Light) */
-  --gradient-sent-start: #5773ff;
-  --gradient-sent-end: #6d8cff;
-  --gradient-received-start: #f8f9fe;
-  --gradient-received-end: #e8eaf6;
-  --text-received-light: #2d3748;
+  --gradient-sent-start: #4c9bf5;
+  --gradient-sent-end: #4a89e0;
+  --text-sent-light: #ffffff;
+
+  --gradient-received-start: #f4f9fb;
+  --gradient-received-end: #edf5f9;
+  --text-received-light: #3a4a5a;
+
   --gradient-sent-border: rgba(255, 255, 255, 0.2);
   --gradient-received-border: rgba(0, 0, 0, 0.08);
 
@@ -34,21 +39,30 @@
 
   /* Layout */
   --outer-padding: 8px;
+  --input-radius: 20px;
+  --btn-radius: 16px;
+  --accent-color: #5684ff;
+  --accent-gradient: linear-gradient(135deg, #5684ff 0%, #7b61ff 100%);
+  --input-bg-light: rgba(255, 255, 255, 0.95);
+  --input-bg-dark: rgba(32, 33, 36, 0.9);
+  --input-shadow: 0 4px 20px -6px rgba(0, 0, 0, 0.1);
 }
 
 /* Dark Theme Overrides */
 .dark-theme {
-  --primary-dark: #191A1B;
+  --primary-dark: #191a1b;
   --secondary-dark: #232526;
   --text-dark: #e0e0e0;
-  --accent-color: #2E8B57;
+  --accent-color: #2e8b57;
   --glass-effect: var(--glass-effect-dark);
 
+  /* Gradient Accents (Dark) */
   --gradient-sent-start: #647a91;
   --gradient-sent-end: #556a81;
   --gradient-received-start: #4e5a6a;
   --gradient-received-end: #3e4a5a;
-  --text-received-dark: #C7CCD1;
+
+  --text-received-dark: #c7ccd1;
   --gradient-sent-border: rgba(255, 255, 255, 0.12);
   --gradient-received-border: rgba(255, 255, 255, 0.04);
 }
