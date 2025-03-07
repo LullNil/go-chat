@@ -38,7 +38,7 @@
   --sidebar-text-dark: var(--text-dark);
 
   /* Layout */
-  --outer-padding: 8px;
+  /* --outer-padding: 8px; */
   --input-radius: 20px;
   --btn-radius: 16px;
   --accent-color: #5684ff;

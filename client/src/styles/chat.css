@@ -24,7 +24,7 @@
   position: relative;
   flex: 1;
   background: var(--glass-effect);
-  border-radius: 18px;
+  /* border-radius: 18px; */
   border: 1px solid rgba(0, 0, 0, 0.08);
   transition: var(--transition-default);
   margin-top: 35px;
@@ -67,7 +67,6 @@
 }
 .dark-theme .chat-title {
   background: var(--secondary-dark);
-  border-bottom: 1px solid rgba(255, 255, 255, 0.03);
 }
 .dark-theme .chat-title h2 {
   color: var(--text-dark);
@@ -83,6 +82,7 @@
   overflow: hidden;
   position: relative;
   scroll-behavior: smooth;
+  background: var(--primary-dark);
 }
 .messages-inner {
   display: flex;
@@ -123,7 +123,7 @@
 .chat-message {
   position: relative;
   padding: 12px 16px;
-  border-radius: 12px;
+  border-radius: 18px;
   max-width: min(80%, 600px);
   width: fit-content;
   word-wrap: break-word;
@@ -224,8 +224,8 @@
 
 /* Send Button */
 .btn-circle {
-  width: 55px;
-  height: 55px;
+  width: 48px;
+  height: 48px;
   border: none;
   cursor: pointer;
   border-radius: 50%;
@@ -288,8 +288,8 @@
 }
 .chat-input textarea {
   font-size: 16px;
-  padding-top: calc((48px - 16px) / 2);
-  padding-bottom: calc((48px - 16px) / 2);
+  padding-top: calc((40px - 16px) / 2);
+  padding-bottom: calc((40px - 16px) / 2);
   padding-left: 12px;
   padding-right: 12px;
   background: rgba(255, 255, 255, 0.1);

@@ -10,7 +10,7 @@ const stateFile = path.join(app.getPath("userData"), "window-state.json");
 
 // Default window state
 let windowState = {
-  width: 980,
+  width: 1100,
   height: 800,
 };
 
