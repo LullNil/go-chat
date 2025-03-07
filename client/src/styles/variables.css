@@ -17,12 +17,13 @@
   --dark-glass: rgba(0, 0, 0, 0.5);
 
   /* Gradient Accents (Light) */
-  --gradient-sent-start: #4c9bf5;
-  --gradient-sent-end: #4a89e0;
   --text-sent-light: #ffffff;
 
+  --gradient-sent-start: #4c9bf5;
+  --gradient-sent-end: #4a89e0;
   --gradient-received-start: #f4f9fb;
   --gradient-received-end: #edf5f9;
+  
   --text-received-light: #3a4a5a;
 
   --gradient-sent-border: rgba(255, 255, 255, 0.2);
