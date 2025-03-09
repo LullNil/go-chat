@@ -1,52 +1,30 @@
-/* variables.css */
-
-/* Light Theme Variables */
 :root {
   --primary-light: #f7f9fc;
   --secondary-light: #e2e8f0;
   --text-light: #333333;
 
-  /* Dark Theme Base */
-  --text-dark: #e0e0e0;
-  --message-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
-
-  /* Glass Effects */
+  /* Light Theme Variables */
   --glass-effect-light: rgba(255, 255, 255, 0.6);
-  --glass-effect-dark: rgba(20, 20, 20, 0.85);
   --glass-effect: var(--glass-effect-light);
-  --dark-glass: rgba(0, 0, 0, 0.5);
 
   /* Gradient Accents (Light) */
-  --text-sent-light: #ffffff;
-
   --gradient-sent-start: #4c9bf5;
   --gradient-sent-end: #4a89e0;
   --gradient-received-start: #f4f9fb;
   --gradient-received-end: #edf5f9;
-  
+
+  --text-sent-light: #ffffff;
   --text-received-light: #3a4a5a;
 
   --gradient-sent-border: rgba(255, 255, 255, 0.2);
-  --gradient-received-border: rgba(0, 0, 0, 0.08);
+  --gradient-received-border: rgba(0, 0, 0, 0.05);
 
   /* Animations */
   --transition-default: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-  /* Sidebar */
-  --sidebar-bg-light: var(--primary-light);
-  --sidebar-bg-dark: var(--primary-dark);
-  --sidebar-text-light: var(--text-light);
-  --sidebar-text-dark: var(--text-dark);
-
-  /* Layout */
-  /* --outer-padding: 8px; */
-  --input-radius: 20px;
-  --btn-radius: 16px;
-  --accent-color: #5684ff;
-  --accent-gradient: linear-gradient(135deg, #5684ff 0%, #7b61ff 100%);
-  --input-bg-light: rgba(255, 255, 255, 0.95);
-  --input-bg-dark: rgba(32, 33, 36, 0.9);
-  --input-shadow: 0 4px 20px -6px rgba(0, 0, 0, 0.1);
+  /* Dark Theme Base */
+  --text-dark: #e0e0e0;
+  --message-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
 /* Dark Theme Overrides */
@@ -54,16 +32,14 @@
   --primary-dark: #191a1b;
   --secondary-dark: #232526;
   --text-dark: #e0e0e0;
-  --accent-color: #2e8b57;
-  --glass-effect: var(--glass-effect-dark);
 
   /* Gradient Accents (Dark) */
-  --gradient-sent-start: #647a91;
-  --gradient-sent-end: #556a81;
-  --gradient-received-start: #4e5a6a;
-  --gradient-received-end: #3e4a5a;
+  --gradient-sent-start: #2962ff;
+  --gradient-sent-end: #4a88e0d2;
+  --gradient-received-start: rgba(255, 255, 255, 0.05);
+  --gradient-received-end: rgba(255, 255, 255, 0.08);
 
-  --text-received-dark: #c7ccd1;
+  --text-received-dark: #ffffff;
   --gradient-sent-border: rgba(255, 255, 255, 0.12);
-  --gradient-received-border: rgba(255, 255, 255, 0.04);
+  --gradient-received-border: rgba(255, 255, 255, 0.01);
 }

@@ -1,23 +1,22 @@
 <template>
-  <!-- Middle Panel -->
+  <!-- Middle Panel for chat navigation -->
   <div
     ref="middlePanel"
     class="middle-panel"
     :class="{ closed: !isMiddleOpen, resizing: isResizing }"
     :style="{ width: isMiddleOpen ? panelWidth + 'px' : '80px' }"
   >
-    <!-- Resize middle-panel handle -->
+    <!-- Resize handle for middle panel -->
     <div
       class="resize-handle"
       :class="{ active: isResizing }"
       @mousedown="initResize"
     ></div>
 
-    <!-- Middle Panel Content -->
+    <!-- Expanded Middle Panel Content -->
     <div v-if="isMiddleOpen" class="middle-panel-content">
-      <!-- Middle Panel header -->
+      <!-- Chat header with dropdown menu trigger -->
       <div class="chat-header" ref="chatHeader">
-        <!-- Icon to open dropdown menu -->
         <div
           class="plus-icon-wrapper"
           :class="{ active: isMenuOpen }"
@@ -27,8 +26,6 @@
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
           </svg>
         </div>
-
-        <!-- Header action -->
         <div class="header-action">
           <h3
             @click="toggleMiddlePanel"
@@ -37,8 +34,7 @@
             Чаты
           </h3>
         </div>
-
-        <!-- Search input -->
+        <!-- Search input field -->
         <div class="search-container" :class="{ active: isSearchActive }">
           <input
             ref="searchInput"
@@ -47,7 +43,6 @@
             placeholder="Поиск"
             v-model="searchQuery"
           />
-
           <div
             class="search-icon-wrapper"
             @click="toggleSearch"
@@ -75,7 +70,7 @@
         </div>
       </div>
 
-      <!-- Categories container -->
+      <!-- Categories container with horizontal scroll -->
       <div class="categories-container" ref="categoriesContainer">
         <div class="categories-scroll" @wheel="handleCategoriesScroll">
           <button
@@ -111,7 +106,7 @@
         </div>
       </div>
 
-      <!-- Bottom area (for mobile screens)-->
+      <!-- Bottom area for mobile screens -->
       <div class="bottom-area">
         <button class="bi bi-gear"></button>
         <button
@@ -143,10 +138,22 @@
         ref="minimizedHeader"
         @click="toggleMiddlePanel"
       >
-        <span class="close-mid-btn bi bi-list"></span>
+        <span class="close-mid-btn"
+          ><svg
+            width="32"
+            height="32"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="2"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            xmlns="http://www.w3.org/2000/svg"
+          >
+            <polyline points="9 18 15 12 9 6" />
+          </svg>
+        </span>
       </div>
-
-      <!-- Minimized chat list buttons -->
       <div class="minimized-buttons custom-scroll" ref="minimizedButtons">
         <button
           @click="selectChat('general')"
@@ -186,9 +193,9 @@ export default {
       default: false,
     },
   },
-
   data() {
     return {
+      // Panel width from localStorage or default value
       panelWidth: localStorage.getItem("panelWidth")
         ? Number(localStorage.getItem("panelWidth"))
         : 280,
@@ -204,8 +211,10 @@ export default {
       ],
       activeCategory: 0,
       categories: ["Все", "Личные", "Группы", "Архив", "Избранное"],
+      // Width thresholds for panel resizing
       SNAP_THRESHOLD: 260,
       MIN_THRESHOLD: 120,
+      // Icons for theme toggle
       sunIcon: `M12 3v1
                   m0 16v1
                   m9-9h-1
@@ -220,14 +229,14 @@ export default {
       animateIcon: false,
     };
   },
-
   computed: {
+    // Determine if the middle panel is open based on its width
     isMiddleOpen() {
       return this.panelWidth > this.MIN_THRESHOLD;
     },
   },
-
   mounted() {
+    // Add scroll event listeners for chat list and minimized buttons
     if (this.$refs.chatListScroll) {
       this.$refs.chatListScroll.addEventListener(
         "scroll",
@@ -245,8 +254,8 @@ export default {
       this.handleMinimizedScroll();
     }
   },
-
   beforeUnmount() {
+    // Remove global event listeners for resizing and scroll events
     window.removeEventListener("mousemove", this.onResize);
     window.removeEventListener("mouseup", this.stopResize);
     if (this.$refs.chatListScroll) {
@@ -262,8 +271,8 @@ export default {
       );
     }
   },
-
   methods: {
+    // Initialize panel resizing on mousedown event
     initResize(e) {
       e.preventDefault();
       this.isResizing = true;
@@ -272,6 +281,7 @@ export default {
       window.addEventListener("mouseup", this.stopResize);
     },
 
+    // Handle resizing of the panel based on mouse movement
     onResize(e) {
       if (!this.isResizing) return;
       const panelRect = this.$refs.middlePanel.getBoundingClientRect();
@@ -285,6 +295,7 @@ export default {
       }
     },
 
+    // Stop resizing the panel and save the new width to localStorage
     stopResize() {
       if (this.isResizing) {
         this.isResizing = false;
@@ -293,6 +304,7 @@ export default {
         window.removeEventListener("mouseup", this.stopResize);
         localStorage.setItem("panelWidth", this.panelWidth);
         this.$nextTick(() => {
+          // Re-add scroll event listeners if needed
           if (this.$refs.chatListScroll) {
             this.$refs.chatListScroll.addEventListener(
               "scroll",
@@ -311,13 +323,16 @@ export default {
       }
     },
 
+    // Handle click on a menu item (e.g., theme toggle)
     handleMenuItemClick(item) {
       if (item.key === "theme") {
         this.emitToggleTheme();
       }
-      //   this.isMenuOpen = false;
+      // Optionally, close the menu after selection
+      // this.isMenuOpen = false;
     },
 
+    // Handle horizontal scroll for the categories container
     handleCategoriesScroll(e) {
       const container = this.$refs.categoriesContainer;
       if (container) {
@@ -325,10 +340,12 @@ export default {
       }
     },
 
+    // Set the active category based on user selection
     selectCategory(index) {
       this.activeCategory = index;
     },
 
+    // Toggle the middle panel open/close state and update width accordingly
     toggleMiddlePanel() {
       if (this.isMiddleOpen) {
         this.lastExpandedWidth = this.panelWidth;
@@ -355,6 +372,7 @@ export default {
       });
     },
 
+    // Toggle search input visibility and focus on it when activated
     toggleSearch() {
       this.isSearchActive = !this.isSearchActive;
       if (this.isSearchActive) {
@@ -364,14 +382,17 @@ export default {
       }
     },
 
+    // Toggle dropdown menu visibility
     toggleMenu() {
       this.isMenuOpen = !this.isMenuOpen;
     },
 
+    // Emit event to select a chat
     selectChat(chatType) {
       this.$emit("chat-selected", chatType);
     },
 
+    // Handle scroll event in chat list to add a shadow effect on categories container
     handleChatListScroll() {
       if (!this.$refs.chatListScroll || !this.$refs.categoriesContainer) return;
       const scrollTop = this.$refs.chatListScroll.scrollTop;
@@ -381,6 +402,7 @@ export default {
       );
     },
 
+    // Handle scroll event in minimized buttons to add a shadow effect on header
     handleMinimizedScroll() {
       if (!this.$refs.minimizedButtons) return;
       const scrollTop = this.$refs.minimizedButtons.scrollTop;
@@ -392,6 +414,7 @@ export default {
       }
     },
 
+    // Emit event to toggle the theme
     emitToggleTheme() {
       this.$emit("toggle-theme");
     },

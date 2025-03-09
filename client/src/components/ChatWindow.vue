@@ -1,7 +1,7 @@
 <template>
-  <!-- Chat window -->
+  <!-- Chat window container -->
   <div class="chat-box">
-    <!-- If chat selected -->
+    <!-- If a chat is active -->
     <div
       v-if="activeChat"
       class="chat-messages custom-scroll"
@@ -16,12 +16,12 @@
       </div>
 
       <div ref="chatContainer" class="chat-messages chat-scroll">
-        <!-- Container with dialog start date -->
+        <!-- Display dialog start date if messages exist -->
         <div v-if="messages.length > 0" class="dialog-date">
           {{ dialogStartDate }}
         </div>
 
-        <!-- Chat messages area -->
+        <!-- Chat messages -->
         <div class="messages-inner">
           <div
             v-for="(msg, index) in messages"
@@ -46,7 +46,7 @@
           ref="textarea"
           @input="adjustTextareaHeight"
         ></textarea>
-        <!-- Send message icon -->
+        <!-- Send message button -->
         <button class="btn-circle" @click="handleSendMessage">
           <svg class="send-icon" viewBox="0 0 24 24" fill="none">
             <path
@@ -61,7 +61,7 @@
       </div>
     </div>
 
-    <!-- If no chat selected -->
+    <!-- Placeholder if no chat is active -->
     <div v-else class="chat-placeholder">
       <p>Выберите чат для начала общения</p>
     </div>
@@ -77,12 +77,12 @@ export default {
       default: "",
     },
   },
-
   data() {
     return {
       messages: [],
       ws: null,
       newMessage: "",
+      // Initialize dialog start date in Russian locale format
       dialogStartDate: new Date().toLocaleDateString("ru-RU", {
         day: "numeric",
         month: "long",
@@ -90,8 +90,8 @@ export default {
       }),
     };
   },
-
   computed: {
+    // Compute the chat title based on the active chat type
     chatTitle() {
       switch (this.activeChat) {
         case "general":
@@ -103,10 +103,9 @@ export default {
       }
     },
   },
-
   watch: {
+    // Watch for changes in activeChat to manage WebSocket connection and message reset
     activeChat(newChat, oldChat) {
-      // Disconnect and clear messages on chat change
       if (oldChat) {
         this.disconnectWebSocket();
         this.messages = [];
@@ -116,18 +115,17 @@ export default {
       }
     },
   },
-
   beforeUnmount() {
+    // Disconnect WebSocket when component is destroyed
     this.disconnectWebSocket();
   },
-
   methods: {
-    // Emit toggle-sidebar event
+    // Emit event to toggle the sidebar visibility
     emitToggleSidebar() {
       this.$emit("toggle-sidebar");
     },
 
-    // Connect to WebSocket
+    // Establish WebSocket connection based on the active chat type
     connectWebSocket() {
       let url = "";
       if (this.activeChat === "general") {
@@ -137,12 +135,15 @@ export default {
       }
       if (url) {
         this.ws = new WebSocket(url);
+        // On successful connection, log connection status
         this.ws.onopen = () => {
           console.log(`WebSocket connected: ${this.activeChat}`);
         };
+        // On receiving a message, parse JSON and update message list
         this.ws.onmessage = (event) => {
           try {
             const msg = JSON.parse(event.data);
+            // Delay echo chat messages by 1 second
             if (this.activeChat === "echo") {
               setTimeout(() => {
                 this.messages.push(msg);
@@ -165,7 +166,7 @@ export default {
       }
     },
 
-    // Disconnect from WebSocket
+    // Close the WebSocket connection if it exists
     disconnectWebSocket() {
       if (this.ws) {
         this.ws.close();
@@ -173,13 +174,15 @@ export default {
       }
     },
 
-    // Send message over WebSocket
+    // Send message via WebSocket and update message list
     handleSendMessage() {
       if (!this.newMessage.trim()) return;
       const msg = { user: "Вы", text: this.newMessage };
+      // For echo chat, immediately add message to the list
       if (this.activeChat === "echo") {
         this.messages.push(msg);
       }
+      // Send message if WebSocket is open
       if (this.ws && this.ws.readyState === WebSocket.OPEN) {
         this.ws.send(JSON.stringify(msg));
       } else {
@@ -192,7 +195,7 @@ export default {
       });
     },
 
-    // Add a new line to the message input
+    // Add a newline in the message input when Ctrl+Enter is pressed
     addNewLine(event) {
       event.preventDefault();
       this.newMessage += "\n";
@@ -205,7 +208,7 @@ export default {
       });
     },
 
-    // Adjust the height of the textarea
+    // Adjust the textarea height based on content, with a maximum height limit
     adjustTextareaHeight() {
       const textarea = this.$refs.textarea;
       if (textarea) {
@@ -214,7 +217,7 @@ export default {
       }
     },
 
-    // Scroll to the bottom of the chat container
+    // Smoothly scroll the chat container to the bottom
     scrollToBottom() {
       const chatContainer = this.$refs.chatContainer;
       if (chatContainer) {

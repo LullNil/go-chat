@@ -42,7 +42,6 @@
   text-align: center;
   background: rgba(255, 255, 255, 0.877);
   backdrop-filter: blur(10px);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   user-select: none;
   z-index: 10;
   margin-left: -10px;
@@ -88,7 +87,6 @@
   animation: dialogDateAnimation 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28)
     forwards;
 }
-
 .dark-theme .dialog-date {
   background: rgba(255, 255, 255, 0.05);
   color: var(--text-dark);
@@ -96,8 +94,6 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   font-weight: 100;
 }
-
-/* Анимация появления (scale + fade) */
 @keyframes dialogDateAnimation {
   0% {
     transform: scale(0.95);
@@ -127,7 +123,6 @@
   padding: 8px;
   gap: 3px;
 }
-
 .chat-scroll {
   height: 100%;
   overflow-y: auto;
@@ -189,9 +184,6 @@
   color: #fff;
   text-shadow: none;
 }
-.dark-theme .chat-message p {
-  color: rgba(255, 255, 255, 0.92);
-}
 
 /* Message Types */
 .sent {
@@ -203,7 +195,7 @@
   border: 1px solid var(--gradient-sent-border);
   box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.1),
     inset 0 -1px 0 rgba(255, 255, 255, 0.07);
-  color: white;
+  color: var(--text-sent-light);
   margin-left: auto;
   animation: sendMessageAnimation 0.4s cubic-bezier(0.18, 0.89, 0.32, 1.28)
     forwards;
@@ -214,8 +206,8 @@
   text-shadow: none;
 }
 .dark-theme .sent p::selection {
-  background-color: var(--gradient-received-start);
-  color: #fff;
+  background-color: #ffffffdc;
+  color: #000;
   text-shadow: none;
 }
 .received {
@@ -224,7 +216,7 @@
     var(--gradient-received-start),
     var(--gradient-received-end)
   );
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  border: 1px solid var(--gradient-received-border);
   box-shadow: 0 2px 8px -1px rgba(0, 0, 0, 0.05);
   color: var(--text-received-light);
   font-weight: 500;
@@ -236,8 +228,8 @@
     160deg,
     var(--gradient-sent-start),
     var(--gradient-sent-end)
-  );
-  border: 1px solid rgba(255, 255, 255, 0.12);
+  ) !important;
+  border: 1px solid var(--gradient-sent-border);
   box-shadow: var(--message-shadow-dark),
     inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
@@ -258,7 +250,7 @@
     var(--gradient-received-start),
     var(--gradient-received-end)
   );
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  border: 1px solid var(--gradient-received-border);
   box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
   font-weight: 100;
 }
@@ -291,6 +283,7 @@
   height: 36px;
   transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.27, 1.55),
     opacity 0.2s ease;
+  color: var(--gradient-sent-end);
 }
 .btn-circle:hover .send-icon {
   transform: translateX(2px);
@@ -352,8 +345,9 @@ textarea::selection {
   border-top: 1px solid rgba(255, 255, 255, 0.04);
   border-left: 1px solid rgba(255, 255, 255, 0.02);
   border-right: 1px solid rgba(255, 255, 255, 0.02);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
+  border-bottom: none;
+  backdrop-filter: blur(30px);
+  -webkit-backdrop-filter: blur(30px);
 }
 .dark-theme .chat-input textarea {
   color: var(--text-dark);
@@ -361,7 +355,7 @@ textarea::selection {
   box-shadow: none;
 }
 .dark-theme textarea::selection {
-  background-color: var(--gradient-received-end);
+  background-color: var(--gradient-sent-end);
   color: #fff;
   text-shadow: none;
 }
