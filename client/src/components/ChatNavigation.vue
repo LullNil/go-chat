@@ -38,19 +38,6 @@
           </h3>
         </div>
 
-        <!-- Dropdown menu -->
-        <div class="dropdown-menu-mid" :class="{ active: isMenuOpen }">
-          <div
-            class="menu-item"
-            v-for="(item, index) in menuItems"
-            :key="index"
-            @click.stop="handleMenuItemClick(item)"
-          >
-            <i :class="item.icon"></i>
-            <span>{{ item.label }}</span>
-          </div>
-        </div>
-
         <!-- Search input -->
         <div class="search-container" :class="{ active: isSearchActive }">
           <input
@@ -72,6 +59,19 @@
               />
             </svg>
           </div>
+        </div>
+      </div>
+
+      <!-- Dropdown menu -->
+      <div class="dropdown-menu-mid" :class="{ active: isMenuOpen }">
+        <div
+          class="menu-item"
+          v-for="(item, index) in menuItems"
+          :key="index"
+          @click.stop="handleMenuItemClick(item)"
+        >
+          <i :class="item.icon"></i>
+          <span>{{ item.label }}</span>
         </div>
       </div>
 

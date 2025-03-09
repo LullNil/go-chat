@@ -79,8 +79,9 @@
   font-size: 0.85rem;
   padding: 6px 12px;
   border-radius: 12px;
-  width: max-content;
+  border: 1px solid rgba(0, 0, 0, 0.1);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  width: max-content;
   transition: all 0.3s ease;
   user-select: none;
   font-weight: 500;
@@ -89,8 +90,9 @@
 }
 
 .dark-theme .dialog-date {
-  background: var(--secondary-dark);
+  background: rgba(255, 255, 255, 0.05);
   color: var(--text-dark);
+  border: 1px solid rgba(255, 255, 255, 0.01);
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   font-weight: 100;
 }

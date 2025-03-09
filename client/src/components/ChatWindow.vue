@@ -10,7 +10,7 @@
       <!-- Chat header -->
       <div class="chat-title">
         <button @click="emitToggleSidebar" class="menu-toggle">
-          <span class="bi bi-list"></span>
+          <i class="bi bi-arrow-left-short"></i>
         </button>
         <h2>{{ chatTitle }}</h2>
       </div>

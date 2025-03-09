@@ -1,16 +1,23 @@
 <template>
   <div class="chat-area">
-    <!-- Chat navigation component -->
     <ChatNavigation
+      v-if="!isMobile || (isMobile && !activeChat)"
       :activeChat="activeChat"
       :isDarkTheme="isDarkTheme"
+      :isMobile="isMobile"
       @chat-selected="selectChat"
       @toggle-theme="toggleTheme"
       ref="navigation"
     />
 
-    <!-- Chat window component -->
-    <ChatWindow :activeChat="activeChat" @toggle-sidebar="toggleNavigation" />
+    <ChatWindow
+      v-if="!isMobile || (isMobile && activeChat)"
+      :activeChat="activeChat"
+      :isMobile="isMobile"
+      @toggle-sidebar="closeChat"
+      @close-chat="closeChat"
+      key="chatWindow"
+    />
   </div>
 </template>
 
@@ -20,54 +27,60 @@ import ChatWindow from "./ChatWindow.vue";
 
 export default {
   name: "ChatInterface",
-  components: {
-    ChatNavigation,
-    ChatWindow,
-  },
-
+  components: { ChatNavigation, ChatWindow },
   props: {
-    isDarkTheme: {
-      type: Boolean,
-      required: true,
+    isDarkTheme: { type: Boolean, required: true },
+  },
+  data() {
+    return {
+      activeChat: "",
+      windowWidth: window.innerWidth,
+    };
+  },
+  computed: {
+    isMobile() {
+      return this.windowWidth < 768;
+    },
+  },
+  watch: {
+    isDarkTheme(newVal) {
+      this.updatePageBackground(newVal);
     },
   },
 
-  data() {
-    return {
-      activeChat: "", // If empty - chat is closed, display placeholder
-    };
-  },
-
   mounted() {
+    this.updatePageBackground(this.isDarkTheme);
+    window.addEventListener("resize", this.handleResize);
     window.addEventListener("keydown", this.handleCloseChatWindow);
     window.addEventListener("mousedown", this.handleCloseChatWindow);
   },
-
   beforeUnmount() {
+    window.removeEventListener("resize", this.handleResize);
     window.removeEventListener("keydown", this.handleCloseChatWindow);
     window.removeEventListener("mousedown", this.handleCloseChatWindow);
   },
-
   methods: {
+    updatePageBackground(isDark) {
+      const bgColor = isDark ? "#232526" : "#ffffff";
+      document.body.style.background = bgColor;
+      const themeMeta = document.querySelector('meta[name="theme-color"]');
+      if (themeMeta) {
+        themeMeta.setAttribute("content", bgColor);
+      }
+    },
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
     selectChat(chatType) {
       if (this.activeChat === chatType) return;
       this.activeChat = chatType;
     },
-
     toggleTheme() {
       this.$emit("toggle-theme");
     },
-
-    toggleNavigation() {
-      if (
-        this.$refs.navigation &&
-        typeof this.$refs.navigation.toggleMiddlePanel === "function"
-      ) {
-        this.$refs.navigation.toggleMiddlePanel();
-      }
+    closeChat() {
+      this.activeChat = "";
     },
-
-    // Close chat handler
     handleCloseChatWindow(e) {
       switch (e.type) {
         case "keydown":
@@ -84,11 +97,8 @@ export default {
           break;
       }
     },
-
-    // Close chat method
-    closeChat() {
-      this.activeChat = "";
-    },
   },
 };
 </script>
+
+
