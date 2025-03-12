@@ -60,9 +60,10 @@
       <!-- Dropdown menu -->
       <div class="dropdown-menu-mid" :class="{ active: isMenuOpen }">
         <div
-          class="menu-item"
           v-for="(item, index) in menuItems"
+          class="menu-item"
           :key="index"
+          :class="{ 'logout-item': item.key === 'logout' }"
           @click.stop="handleMenuItemClick(item)"
         >
           <i :class="item.icon"></i>
@@ -140,6 +141,7 @@
       >
         <span class="close-mid-btn"
           ><svg
+            class="arrow-icon"
             width="32"
             height="32"
             viewBox="0 0 24 24"
@@ -208,6 +210,7 @@ export default {
         { icon: "bi bi-person-plus", label: "Профиль", key: "profile" },
         { icon: "bi bi-palette", label: "Тема", key: "theme" },
         { icon: "bi bi-gear", label: "Настройки", key: "settings" },
+        { icon: "bi bi-box-arrow-left", label: "Выход", key: "logout" },
       ],
       activeCategory: 0,
       categories: ["Все", "Личные", "Группы", "Архив", "Избранное"],

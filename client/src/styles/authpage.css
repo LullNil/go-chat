@@ -29,7 +29,7 @@
   color: #fff;
 }
 .dark-theme .mode-toggle {
-  color: var(--gradient-received-start);
+  color: var(--gradient-sent-start);
 }
 
 /* Footer styles */
@@ -365,11 +365,11 @@
 }
 
 .dark-theme .auth-button {
-  background: var(--gradient-received-start);
+  background: var(--gradient-sent-start);
 }
 .dark-theme .auth-button:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px var(--gradient-sent-end);
+  box-shadow: 0 1px 4px var(--gradient-sent-start);
 }
 
 .mobile-error-message {

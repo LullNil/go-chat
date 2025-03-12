@@ -10,7 +10,22 @@
       <!-- Chat header -->
       <div class="chat-title">
         <button @click="emitToggleSidebar" class="menu-toggle">
-          <i class="bi bi-arrow-left-short"></i>
+          <span class="close-chat-btn"
+            ><svg
+              class="arrow-icon"
+              width="32"
+              height="32"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              xmlns="http://www.w3.org/2000/svg"
+            >
+              <polyline points="15 18 9 12 15 6" />
+            </svg>
+          </span>
         </button>
         <h2>{{ chatTitle }}</h2>
       </div>
@@ -86,7 +101,6 @@ export default {
       dialogStartDate: new Date().toLocaleDateString("ru-RU", {
         day: "numeric",
         month: "long",
-        year: "numeric",
       }),
     };
   },
@@ -189,6 +203,9 @@ export default {
         console.error("WebSocket is not open.");
       }
       this.newMessage = "";
+      this.$nextTick(() => {
+        this.$refs.textarea.focus();
+      });
       this.$nextTick(() => {
         this.scrollToBottom();
         this.adjustTextareaHeight();

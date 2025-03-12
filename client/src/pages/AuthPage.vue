@@ -202,28 +202,34 @@ export default {
   },
   data() {
     return {
+      // Mode and form data
       isLoginMode: true,
       username: "",
       email: "",
       password: "",
       confirmPassword: "",
+      // UI state flags
       showPassword: false,
+      animateIcon: false,
+      errorMessage: "",
+      // Error messages for individual fields
       errors: {
         username: "",
         email: "",
         password: "",
         confirmPassword: "",
       },
-      sunIcon: `M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z`,
-      moonIcon: `M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z`,
-      animateIcon: false,
-      errorMessage: "",
+      // Icons for theme switch
+      sunIcon:
+        "M12 3v1m0 16v1m9-9h-1M4 12H3m15.364-6.364l-.707.707M6.343 17.657l-.707.707m12.728 0l-.707-.707M6.343 6.343l-.707-.707M12 8a4 4 0 110 8 4 4 0 010-8z",
+      moonIcon: "M21 12.79A9 9 0 1111.21 3a7 7 0 009.79 9.79z",
+      // Unused error message array and id (reserved for potential future use)
       errorMessages: [],
       messageId: 0,
     };
   },
   watch: {
-    // Animate the icon when the theme changes
+    // Animate the theme icon when the theme prop changes
     isDarkTheme() {
       this.animateIcon = true;
       setTimeout(() => {
@@ -232,56 +238,9 @@ export default {
     },
   },
   methods: {
-    // Handle form submission and validation
-    handleSubmit() {
-      this.resetErrors();
-      let hasErrors = false;
-
-      // Валидация
-      if (!this.email.trim()) {
-        this.errors.email = "Пожалуйста, введите почту.";
-        hasErrors = true;
-      } else if (!/.+@.+\..+/.test(this.email)) {
-        this.errors.email = "Неверный формат почты.";
-        hasErrors = true;
-      }
-
-      if (!this.password.trim()) {
-        this.errors.password = "Пожалуйста, введите пароль.";
-        hasErrors = true;
-      }
-
-      if (!this.isLoginMode) {
-        if (!this.username.trim()) {
-          this.errors.username = "Пожалуйста, введите имя пользователя.";
-          hasErrors = true;
-        }
-        if (this.password !== this.confirmPassword) {
-          this.errors.confirmPassword = "Пароли не совпадают.";
-          hasErrors = true;
-        }
-      }
-
-      // Показываем сообщение об ошибке для мобильных
-      if (hasErrors) {
-        this.showMobileError();
-      }
-
-      // If there are no errors, emit the corresponding event with authentication data
-      if (this.noErrors()) {
-        const authData = this.isLoginMode
-          ? { email: this.email, password: this.password }
-          : {
-              username: this.username,
-              email: this.email,
-              password: this.password,
-            };
-
-        this.$emit(this.isLoginMode ? "login" : "register", authData);
-      }
-    },
-
-    // Reset error messages
+    /**
+     * Resets all field error messages.
+     */
     resetErrors() {
       this.errors = {
         username: "",
@@ -291,11 +250,26 @@ export default {
       };
     },
 
-    // Check if there are no errors
+    /**
+     * Clears the error message for a specific field.
+     * @param {string} field - The field name whose error should be cleared.
+     */
+    clearError(field) {
+      this.errors[field] = "";
+    },
+
+    /**
+     * Checks if there are no validation errors.
+     * @returns {boolean} True if there are no errors, false otherwise.
+     */
     noErrors() {
       return Object.values(this.errors).every((error) => error === "");
     },
 
+    /**
+     * Displays the first error message in a mobile-friendly format.
+     * The error message will automatically disappear after a short delay.
+     */
     showMobileError() {
       const firstError = Object.values(this.errors).find((error) => error);
       if (firstError) {
@@ -307,11 +281,113 @@ export default {
       }
     },
 
+    /**
+     * Removes an error message from the errorMessages array by its ID.
+     * (Reserved for potential future use)
+     * @param {number} id - The ID of the message to remove.
+     */
     removeMessage(id) {
       this.errorMessages = this.errorMessages.filter((msg) => msg.id !== id);
     },
 
-    // Toggle between login and registration mode
+    /**
+     * Form validation.
+     */
+    validateForm() {
+      let hasErrors = false;
+
+      // Validate email field
+      if (!this.email.trim()) {
+        this.errors.email = "Пожалуйста, введите почту.";
+        hasErrors = true;
+      } else if (!/.+@.+\..+/.test(this.email)) {
+        this.errors.email = "Неверный формат почты.";
+        hasErrors = true;
+      }
+
+      // Validate password field
+      if (!this.password.trim()) {
+        this.errors.password = "Пожалуйста, введите пароль.";
+        hasErrors = true;
+      }
+
+      // Additional validations for registration mode
+      if (!this.isLoginMode) {
+        if (!this.username.trim()) {
+          this.errors.username = "Пожалуйста, введите имя пользователя.";
+          hasErrors = true;
+        }
+        if (this.password !== this.confirmPassword) {
+          this.errors.confirmPassword = "Пароли не совпадают.";
+          hasErrors = true;
+        }
+      }
+
+      return !hasErrors;
+    },
+
+    sendAuthRequest() {
+      const url = this.isLoginMode
+        ? "http://localhost:8081/login"
+        : "http://localhost:8081/register";
+      const authData = this.isLoginMode
+        ? { email: this.email, password: this.password }
+        : {
+            username: this.username,
+            email: this.email,
+            password: this.password,
+          };
+
+      // TODO: delete when backend is ready
+      this.$emit(this.isLoginMode ? "login" : "register", authData);
+
+      fetch(url, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(authData),
+      })
+        .then((response) => {
+          if (!response.ok) {
+            throw new Error("Network response was not ok");
+          }
+          return response.json();
+        })
+        .then((data) => {
+          this.$emit(this.isLoginMode ? "login" : "register", data);
+        })
+        .catch((error) => {
+          console.error("Error sending authentication request:", error);
+        })
+        .catch((error) => {
+          console.error("Error sending authentication request:", error);
+          this.errorMessage = error.message;
+          this.showMobileError();
+        });
+    },
+
+    /**
+     * Handles the form submission by validating inputs and emitting either
+     * a 'login' or 'register' event with the authentication data if validation passes.
+     */
+    handleSubmit() {
+      this.resetErrors();
+
+      // Display mobile error if any validation errors exist
+      if (!this.validateForm()) {
+        this.showMobileError();
+        return;
+      }
+
+      // sdfsdfg@c.com
+      this.sendAuthRequest();
+    },
+
+    /**
+     * Toggles between login and registration modes.
+     * Resets form fields and error messages.
+     */
     toggleMode() {
       this.resetErrors();
       this.username = "";
@@ -321,19 +397,18 @@ export default {
       this.isLoginMode = !this.isLoginMode;
     },
 
-    // Toggle password visibility
+    /**
+     * Toggles the visibility of the password field.
+     */
     togglePassword() {
       this.showPassword = !this.showPassword;
     },
 
-    // Emit event to toggle theme
+    /**
+     * Emits an event to toggle the application theme.
+     */
     toggleTheme() {
       this.$emit("toggle-theme");
-    },
-
-    // Clear error for a specific field
-    clearError(field) {
-      this.errors[field] = "";
     },
   },
 };

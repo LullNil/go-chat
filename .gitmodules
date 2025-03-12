@@ -1,3 +1,0 @@
-[submodule "xauth/xAuth"]
-	path = xauth/xAuth
-	url = https://github.com/memxire/xAuth.git
