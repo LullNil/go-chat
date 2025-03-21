@@ -1,37 +1,45 @@
-/* Variables: base styles and themes */
 :root {
-  /* Light theme */
   --primary-light: #f7f9fc;
   --secondary-light: #e2e8f0;
   --text-light: #333333;
 
-  /* Dark theme */
-  --primary-dark: #121212;
-  --secondary-dark: #1e1e1e;
-  --text-dark: #e0e0e0;
-  --accent-blue: #5865f2;
-
-  /* Glass effects */
+  /* Light Theme Variables */
   --glass-effect-light: rgba(255, 255, 255, 0.6);
-  --glass-effect-dark: rgba(20, 20, 20, 0.85);
   --glass-effect: var(--glass-effect-light);
-  --dark-glass: rgba(0, 0, 0, 0.5);
+
+  /* Gradient Accents (Light) */
+  --gradient-sent-start: #4c9bf5;
+  --gradient-sent-end: #4a89e0;
+  --gradient-received-start: #f4f9fb;
+  --gradient-received-end: #edf5f9;
+
+  --text-sent-light: #ffffff;
+  --text-received-light: #161e25;
+
+  --gradient-sent-border: rgba(255, 255, 255, 0.2);
+  --gradient-received-border: rgba(0, 0, 0, 0.05);
 
   /* Animations */
   --transition-default: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
 
-  /* Sidebar */
-  --sidebar-bg-light: var(--primary-light);
-  --sidebar-bg-dark: var(--primary-dark);
-  --sidebar-text-light: var(--text-light);
-  --sidebar-text-dark: var(--text-dark);
-
-  /* Layout */
-  --outer-padding: 6px;
+  /* Dark Theme Base */
+  --text-dark: #e0e0e0;
+  --message-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
 }
 
+/* Dark Theme Overrides */
 .dark-theme {
-  /* Dark theme variables */
-  --glass-effect: var(--glass-effect-dark);
-  --sidebar-bg: var(--sidebar-bg-dark);
+  --primary-dark: #191a1b;
+  --secondary-dark: #232526;
+  --text-dark: #e0e0e0;
+
+  /* Gradient Accents (Dark) */
+  --gradient-sent-start: #2962ff;
+  --gradient-sent-end: #4a88e0d2;
+  --gradient-received-start: rgba(255, 255, 255, 0.05);
+  --gradient-received-end: rgba(255, 255, 255, 0.08);
+
+  --text-received-dark: #ffffff;
+  --gradient-sent-border: rgba(255, 255, 255, 0.12);
+  --gradient-received-border: rgba(255, 255, 255, 0.01);
 }

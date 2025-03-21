@@ -1,0 +1,12 @@
+env: "local" # local, dev, prod
+storage_path: "./storage/storage.db"
+http_server:
+  address: "localhost:8081"
+  timeout: 5s
+  idle_timeout: 60s
+clients:
+  sso:
+    address: "localhost:50051"
+    timeout: 5s
+    retriesCount: 3
+app_secret: "test-secret"

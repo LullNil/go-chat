@@ -1,9 +1,24 @@
-package main
+package echo
 
 import (
 	"log"
 	"net/http"
+
+	"github.com/gorilla/websocket"
 )
+
+// upgrader is used to upgrade HTTP connections to WebSocket connections.
+// It is shared among the handlers.
+var upgrader = websocket.Upgrader{
+	// Allow connections from any origin.
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
+
+// Message represents the structure of a chat message.
+type Message struct {
+	User string `json:"user"`
+	Text string `json:"text"`
+}
 
 // EchoServer represents a simple echo server.
 type EchoServer struct{}
@@ -13,7 +28,8 @@ func NewEchoServer() *EchoServer {
 	return &EchoServer{}
 }
 
-// Handle upgrades the HTTP connection to a WebSocket and echoes received messages back to the client.
+// Handle upgrades the HTTP connection to a WebSocket and echoes received
+// messages back to the client.
 func (es *EchoServer) Handle(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
