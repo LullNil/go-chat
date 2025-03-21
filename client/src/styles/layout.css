@@ -1,8 +1,18 @@
-/* Main container */
-.main-content {
+/* Layout & Container */
+.chat-container {
+  position: fixed;
+  top: 0;
+  left: 0;
   display: grid;
-  grid-template-columns: 1fr auto;
-  height: 100%;
-  /* gap: 6px; */
-  transition: var(--transition-default);
+  grid-template-columns: auto 1fr;
+  width: 100vw;
+  height: 100vh;
+  padding: var(--outer-padding);
+  box-sizing: border-box;
+  background: var(--primary-light);
+  overflow: hidden;
+  transition: background 0.3s ease, color 0.3s ease;
+}
+.dark-theme .chat-container {
+  background: var(--primary-dark);
 }

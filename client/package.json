@@ -16,7 +16,10 @@
     "bootstrap": "^5.3.3",
     "bootstrap-icons": "^1.11.3",
     "core-js": "^3.8.3",
-    "vue": "^3.2.13"
+    "keytar": "^7.9.0",
+    "vue": "^3.2.13",
+    "vue-router": "^4.5.0",
+    "vuex": "^4.1.0"
   },
   "build": {
     "appId": "com.example.electron-vue-chat",
@@ -27,6 +30,7 @@
     },
     "files": [
       "dist/**/*",
+      "preload.js",
       "node_modules/**/*",
       "public/**/*",
       "main.js"

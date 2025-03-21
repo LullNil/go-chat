@@ -1,13 +1,11 @@
 <template>
-  <div class="chat-area">
-    <!-- Display ChatNavigation on desktop or when no chat is active on mobile -->
-    <ChatNavigation
+  <div class="chat-container">
+    <!-- Display ChatSidebar on desktop or when no chat is active on mobile -->
+    <ChatSidebar
       v-if="!isMobile || (isMobile && !activeChat)"
       :activeChat="activeChat"
-      :isDarkTheme="isDarkTheme"
       :isMobile="isMobile"
       @chat-selected="selectChat"
-      @toggle-theme="toggleTheme"
       ref="navigation"
     />
 
@@ -24,15 +22,12 @@
 </template>
 
 <script>
-import ChatNavigation from "./ChatNavigation.vue";
-import ChatWindow from "./ChatWindow.vue";
+import ChatSidebar from "../ChatSidebar.vue";
+import ChatWindow from "../ChatWindow.vue";
 
 export default {
-  name: "ChatInterface",
-  components: { ChatNavigation, ChatWindow },
-  props: {
-    isDarkTheme: { type: Boolean, required: true },
-  },
+  name: "ChatPage",
+  components: { ChatSidebar, ChatWindow },
   data() {
     return {
       activeChat: "",
@@ -45,15 +40,7 @@ export default {
       return this.windowWidth < 768;
     },
   },
-  watch: {
-    // Update background when theme changes
-    isDarkTheme(newVal) {
-      this.updatePageBackground(newVal);
-    },
-  },
   mounted() {
-    // Set initial page background and add event listeners for resizing and chat closing
-    this.updatePageBackground(this.isDarkTheme);
     window.addEventListener("resize", this.handleResize);
     window.addEventListener("keydown", this.handleCloseChatWindow);
     window.addEventListener("mousedown", this.handleCloseChatWindow);
@@ -65,37 +52,19 @@ export default {
     window.removeEventListener("mousedown", this.handleCloseChatWindow);
   },
   methods: {
-    // Update the page background and meta theme-color based on the current theme
-    updatePageBackground(isDark) {
-      const bgColor = isDark ? "#232526" : "#ffffff";
-      document.body.style.background = bgColor;
-      const themeMeta = document.querySelector('meta[name="theme-color"]');
-      if (themeMeta) {
-        themeMeta.setAttribute("content", bgColor);
-      }
-    },
-
-    // Update windowWidth on resize event
-    handleResize() {
-      this.windowWidth = window.innerWidth;
-    },
-
     // Set the active chat type when a chat is selected
     selectChat(chatType) {
       if (this.activeChat === chatType) return;
       this.activeChat = chatType;
     },
-
-    // Emit event to toggle the theme
-    toggleTheme() {
-      this.$emit("toggle-theme");
-    },
-
     // Close the active chat
     closeChat() {
       this.activeChat = "";
     },
-
+    // Update windowWidth on resize event
+    handleResize() {
+      this.windowWidth = window.innerWidth;
+    },
     // Handle events to close the chat window:
     // Ctrl+Shift+X on keyboard or middle mouse button click
     handleCloseChatWindow(e) {

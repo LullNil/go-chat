@@ -1,22 +1,22 @@
 <template>
-  <!-- Middle Panel for chat navigation -->
+  <!-- Sidebar Panel for chat navigation -->
   <div
-    ref="middlePanel"
-    class="middle-panel"
-    :class="{ closed: !isMiddleOpen, resizing: isResizing }"
-    :style="{ width: isMiddleOpen ? panelWidth + 'px' : '80px' }"
+    ref="sidebarPanel"
+    class="sidebar-panel"
+    :class="{ closed: !isSidebarOpen, resizing: isResizing }"
+    :style="{ width: isSidebarOpen ? panelWidth + 'px' : '80px' }"
   >
-    <!-- Resize handle for middle panel -->
+    <!-- Resize handle for Sidebar panel -->
     <div
       class="resize-handle"
       :class="{ active: isResizing }"
       @mousedown="initResize"
     ></div>
 
-    <!-- Expanded Middle Panel Content -->
-    <div v-if="isMiddleOpen" class="middle-panel-content">
-      <!-- Chat header with dropdown menu trigger -->
-      <div class="chat-header" ref="chatHeader">
+    <!-- Expanded Sidebar Panel Content -->
+    <div v-if="isSidebarOpen" class="sidebar-panel-list">
+      <!-- Sidebar header with dropdown menu trigger -->
+      <div class="sidebar-header">
         <div
           class="plus-icon-wrapper"
           :class="{ active: isMenuOpen }"
@@ -26,9 +26,9 @@
             <path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z" />
           </svg>
         </div>
-        <div class="header-action">
+        <div class="sidebar-header-action">
           <h3
-            @click="toggleMiddlePanel"
+            @click="toggleSidebarPanel"
             :class="{ 'search-active': isSearchActive }"
           >
             Чаты
@@ -50,7 +50,7 @@
           >
             <svg class="search-icon" viewBox="0 0 24 24" fill="currentColor">
               <path
-                d="M15.5 14H14.71L14.43 13.73C15.41 12.59 16 11.11 16 9.5C16 5.91 13.09 3 9.5 3C5.91 3 3 5.91 3 9.5C3 13.09 5.91 16 9.5 16C11.11 16 12.59 15.41 13.73 14.43L14 14.71V15.5L19 20.49L20.49 19L15.5 14ZM9.5 14C7.01 14 5 11.99 5 9.5C5 7.01 7.01 5 9.5 5C11.99 5 14 7.01 14 9.5C14 11.99 11.99 14 9.5 14Z"
+                d="M15.8 16.2L20 20.4L18.6 21.8L14.4 17.6C13.2 18.5 11.7 19 10 19C5.6 19 2 15.4 2 11C2 6.6 5.6 3 10 3C14.4 3 18 6.6 18 11C18 12.7 17.5 14.2 16.6 15.4L16.2 15.8H15.8ZM10 17C13.3 17 16 14.3 16 11C16 7.7 13.3 5 10 5C6.7 5 4 7.7 4 11C4 14.3 6.7 17 10 17Z"
               />
             </svg>
           </div>
@@ -59,21 +59,27 @@
 
       <!-- Dropdown menu -->
       <div class="dropdown-menu-mid" :class="{ active: isMenuOpen }">
-        <div
-          v-for="(item, index) in menuItems"
-          class="menu-item"
-          :key="index"
-          :class="{ 'logout-item': item.key === 'logout' }"
-          @click.stop="handleMenuItemClick(item)"
-        >
-          <i :class="item.icon"></i>
-          <span>{{ item.label }}</span>
+        <div v-for="(item, index) in menuItems" :key="index">
+          <!-- Divider line -->
+          <div v-if="item.hasDivider" class="divider"></div>
+          <div
+            class="menu-item"
+            :class="{ 'logout-item': item.key === 'logout' }"
+            @click.stop="handleMenuItemClick(item)"
+          >
+            <i :class="item.icon"></i>
+            <span>{{ item.label }}</span>
+          </div>
         </div>
       </div>
 
       <!-- Categories container with horizontal scroll -->
       <div class="categories-container" ref="categoriesContainer">
-        <div class="categories-scroll" @wheel="handleCategoriesScroll">
+        <div
+          class="categories-scroll"
+          ref="categoriesScroll"
+          @wheel.passive="handleCategoriesScroll"
+        >
           <button
             class="category-btn"
             v-for="(category, index) in categories"
@@ -112,7 +118,7 @@
         <button class="bi bi-gear"></button>
         <button
           class="theme-toggle"
-          @click="emitToggleTheme"
+          @click="toggleTheme"
           aria-label="Переключить тему"
         >
           <svg
@@ -137,7 +143,7 @@
       <div
         class="minimized-header custom-scroll"
         ref="minimizedHeader"
-        @click="toggleMiddlePanel"
+        @click="toggleSidebarPanel"
       >
         <span class="close-mid-btn"
           ><svg
@@ -183,6 +189,8 @@
 </template>
 
 <script>
+import { mapGetters, mapActions } from "vuex";
+
 export default {
   name: "ChatSidebar",
   props: {
@@ -190,30 +198,36 @@ export default {
       type: String,
       default: "",
     },
-    isDarkTheme: {
-      type: Boolean,
-      default: false,
-    },
   },
   data() {
     return {
       // Panel width from localStorage or default value
       panelWidth: localStorage.getItem("panelWidth")
         ? Number(localStorage.getItem("panelWidth"))
-        : 280,
-      lastExpandedWidth: 280,
+        : 260,
+      lastExpandedWidth: 260,
       isResizing: false,
       isSearchActive: false,
       searchQuery: "",
       isMenuOpen: false,
       menuItems: [
         { icon: "bi bi-person-plus", label: "Профиль", key: "profile" },
-        { icon: "bi bi-palette", label: "Тема", key: "theme" },
+        {
+          icon: "bi bi-palette",
+          label: "Тема",
+          key: "theme",
+          hasDivider: true,
+        },
         { icon: "bi bi-gear", label: "Настройки", key: "settings" },
-        { icon: "bi bi-box-arrow-left", label: "Выход", key: "logout" },
+        {
+          icon: "bi bi-box-arrow-left",
+          label: "Выход",
+          key: "logout",
+          hasDivider: true,
+        },
       ],
       activeCategory: 0,
-      categories: ["Все", "Личные", "Группы", "Архив", "Избранное"],
+      categories: ["Все", "Непрочитанные", "Группы", "Избранное", "Архив"],
       // Width thresholds for panel resizing
       SNAP_THRESHOLD: 260,
       MIN_THRESHOLD: 120,
@@ -232,18 +246,13 @@ export default {
       animateIcon: false,
     };
   },
-  computed: {
-    // Determine if the middle panel is open based on its width
-    isMiddleOpen() {
-      return this.panelWidth > this.MIN_THRESHOLD;
-    },
-  },
+
   mounted() {
     // Add scroll event listeners for chat list and minimized buttons
     if (this.$refs.chatListScroll) {
       this.$refs.chatListScroll.addEventListener(
         "scroll",
-        this.handleChatListScroll
+        this.handleChatListScroll,
       );
     }
     if (this.$refs.minimizedButtons) {
@@ -255,6 +264,12 @@ export default {
     this.handleChatListScroll();
     if (this.$refs.minimizedButtons) {
       this.handleMinimizedScroll();
+    }
+    const isDark = this.$store.getters["theme/isDarkTheme"];
+    if (isDark) {
+      document.documentElement.classList.add("dark-theme");
+    } else {
+      document.documentElement.classList.remove("dark-theme");
     }
   },
   beforeUnmount() {
@@ -274,7 +289,21 @@ export default {
       );
     }
   },
+
+  computed: {
+    // Determine if the sidebar panel is open based on its width
+    isSidebarOpen() {
+      return this.panelWidth > this.MIN_THRESHOLD;
+    },
+
+    ...mapGetters("auth", ["isAuthenticated"]),
+    ...mapGetters("theme", ["isDarkTheme"]),
+  },
+
   methods: {
+    ...mapActions("auth", ["logout"]),
+    ...mapActions("theme", ["toggleTheme"]),
+
     // Initialize panel resizing on mousedown event
     initResize(e) {
       e.preventDefault();
@@ -287,7 +316,7 @@ export default {
     // Handle resizing of the panel based on mouse movement
     onResize(e) {
       if (!this.isResizing) return;
-      const panelRect = this.$refs.middlePanel.getBoundingClientRect();
+      const panelRect = this.$refs.sidebarPanel.getBoundingClientRect();
       const newWidth = e.clientX - panelRect.left;
       if (newWidth < this.MIN_THRESHOLD) {
         this.panelWidth = 80;
@@ -326,20 +355,34 @@ export default {
       }
     },
 
-    // Handle click on a menu item (e.g., theme toggle)
+    // Handle click on a dropdown-menu item
     handleMenuItemClick(item) {
-      if (item.key === "theme") {
-        this.emitToggleTheme();
+      switch (item.key) {
+        case "theme":
+          this.toggleTheme();
+          break;
+        case "logout":
+          this.$store.dispatch("auth/logout");
+          this.$router.push({ name: "AuthPage" });
+          break;
+        case "profile":
+          // console.log("Go to profile");
+          break;
+        case "settings":
+          // console.log("Open settings");
+          break;
+        default:
+          console.log("Dropdown item error:", item.key);
       }
-      // Optionally, close the menu after selection
       // this.isMenuOpen = false;
     },
 
     // Handle horizontal scroll for the categories container
     handleCategoriesScroll(e) {
-      const container = this.$refs.categoriesContainer;
+      const container = this.$refs.categoriesScroll;
       if (container) {
-        container.scrollLeft += e.deltaY;
+        const delta = e.deltaY || e.deltaX;
+        container.scrollLeft += delta * 0.3;
       }
     },
 
@@ -348,13 +391,13 @@ export default {
       this.activeCategory = index;
     },
 
-    // Toggle the middle panel open/close state and update width accordingly
-    toggleMiddlePanel() {
-      if (this.isMiddleOpen) {
+    // Toggle the sidebar panel open/close state and update width accordingly
+    toggleSidebarPanel() {
+      if (this.isSidebarOpen) {
         this.lastExpandedWidth = this.panelWidth;
         this.panelWidth = 80;
       } else {
-        this.panelWidth = this.lastExpandedWidth || 280;
+        this.panelWidth = this.lastExpandedWidth || 260;
       }
       localStorage.setItem("panelWidth", this.panelWidth);
       this.$nextTick(() => {
@@ -416,15 +459,10 @@ export default {
           scrollTop > 0 ? "0 4px 8px -2px rgba(0, 0, 0, 0.25)" : "none";
       }
     },
-
-    // Emit event to toggle the theme
-    emitToggleTheme() {
-      this.$emit("toggle-theme");
-    },
   },
 };
 </script>
 
 <style scoped>
-@import "@/styles/midpanel.css";
+@import "@/styles/sidebar.css";
 </style>

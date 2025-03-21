@@ -2,18 +2,16 @@
   <!-- Custom title bar -->
   <CustomTitlebar />
 
-  <!-- Main container -->
-  <MainPage />
+  <!-- Main chat interface -->
+  <router-view />
 </template>
 
 <script>
 import CustomTitlebar from "./components/CustomTitlebar.vue";
-import MainPage from "./pages/MainPage.vue";
 
 export default {
   name: "App",
   components: {
-    MainPage,
     CustomTitlebar,
   },
 };

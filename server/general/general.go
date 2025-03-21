@@ -1,4 +1,4 @@
-package main
+package general
 
 import (
 	"log"
@@ -10,15 +10,33 @@ import (
 )
 
 var (
-	// generalClients stores the WebSocket connections with their assigned client names.
+	// generalClients stores the WebSocket connections with their
+	// assigned client names.
 	generalClients = make(map[*websocket.Conn]string)
+
 	// gMutex protects access to generalClients.
 	gMutex sync.Mutex
-	// broadcast is the channel used to broadcast messages to all connected clients.
+
+	// broadcast is the channel used to broadcast messages to all
+	// connected clients.
 	broadcast = make(chan Message)
+
 	// nextClientID is used to assign a unique name to each client.
 	nextClientID = 1
 )
+
+// upgrader is used to upgrade HTTP connections to WebSocket connections.
+// It is shared among the handlers.
+var upgrader = websocket.Upgrader{
+	// Allow connections from any origin.
+	CheckOrigin: func(r *http.Request) bool { return true },
+}
+
+// Message represents the structure of a chat message.
+type Message struct {
+	User string `json:"user"`
+	Text string `json:"text"`
+}
 
 // GeneralChat represents a general chat server.
 type GeneralChat struct{}
@@ -28,7 +46,8 @@ func NewGeneralChat() *GeneralChat {
 	return &GeneralChat{}
 }
 
-// Handle upgrades the HTTP connection to a WebSocket, assigns a client name, and listens for messages from the client.
+// Handle upgrades the HTTP connection to a WebSocket, assigns a client name,
+// and listens for messages from the client.
 func (gc *GeneralChat) Handle(w http.ResponseWriter, r *http.Request) {
 	ws, err := upgrader.Upgrade(w, r, nil)
 	if err != nil {
@@ -74,7 +93,8 @@ func (gc *GeneralChat) Handle(w http.ResponseWriter, r *http.Request) {
 	log.Printf("General: %s disconnected", clientName)
 }
 
-// Broadcast listens for messages on the broadcast channel and sends each received message to all connected clients.
+// Broadcast listens for messages on the broadcast channel and sends
+// each received message to all connected clients.
 func (gc *GeneralChat) Broadcast() {
 	for {
 		msg := <-broadcast

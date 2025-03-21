@@ -1,4 +1,5 @@
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron");
+const tokenStore = require("./tokenStore");
 const path = require("node:path");
 const fs = require("fs");
 
@@ -37,10 +38,10 @@ function createWindow() {
     frame: false,
     titleBarStyle: "hidden",
     webPreferences: {
+      preload: path.join(__dirname, "preload.js"),
       devTools: process.env.NODE_ENV === "development" ? true : false,
       nodeIntegration: false,
       contextIsolation: true,
-      preload: path.join(__dirname, "preload.js"),
     },
   });
 
@@ -61,6 +62,12 @@ function createWindow() {
   // Save window state (size and position) when the window is resized or moved
   mainWindow.on("resize", saveWindowState);
   mainWindow.on("move", saveWindowState);
+  // Prevent the user from using the back and forward buttons
+  mainWindow.on("app-command", (e, cmd) => {
+    if (cmd === "browser-backward" || cmd === "browser-forward") {
+      e.preventDefault();
+    }
+  });
 }
 
 function saveWindowState() {
@@ -72,6 +79,19 @@ function saveWindowState() {
     console.error("Error saving window state:", err);
   }
 }
+
+// IPC handlers for token management
+ipcMain.handle("save-token", async (event, token) => {
+  await tokenStore.saveToken(token);
+});
+
+ipcMain.handle("get-token", async (event) => {
+  return await tokenStore.getToken();
+});
+
+ipcMain.handle("delete-token", async (event) => {
+  await tokenStore.deleteToken();
+});
 
 // IPC events for custom title bar actions
 ipcMain.on("window-minimize", (event) => {
