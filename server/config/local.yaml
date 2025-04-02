@@ -9,4 +9,8 @@ clients:
     address: "localhost:50051"
     timeout: 5s
     retriesCount: 3
-app_secret: "test-secret"
+app_secret: "gochat-secret"
+redis:
+  addr: "localhost:6379"
+  password: ""
+  db: 0
