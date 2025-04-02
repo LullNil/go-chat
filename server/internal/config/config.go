@@ -14,6 +14,7 @@ type Config struct {
 	HTTPServer  `yaml:"http_server"`
 	Clients     ClientsConfig `yaml:"clients"`
 	AppSecret   string        `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
+	Redis       RedisConfig   `yaml:"redis"`
 }
 
 type HTTPServer struct {
@@ -26,11 +27,17 @@ type Client struct {
 	Address      string        `yaml:"address"`
 	Timeout      time.Duration `yaml:"timeout"`
 	RetriesCount int           `yaml:"retriesCount"`
-	// Insecure     bool          `yaml:"insecure"` // TODO:implement insecure
+	// Insecure     bool          `yaml:"insecure"` // TODO: implement insecure in prod
 }
 
 type ClientsConfig struct {
 	SSO Client `yaml:"sso"`
+}
+
+type RedisConfig struct {
+	Addr     string `yaml:"addr"`
+	Password string `yaml:"password"`
+	DB       int    `yaml:"db"`
 }
 
 func MustLoad() *Config {

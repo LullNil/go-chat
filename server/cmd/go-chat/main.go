@@ -2,31 +2,28 @@ package main
 
 import (
 	"context"
+	"log/slog"
 	"net/http"
 	"os"
-
-	"log/slog"
-
-	ssogrpc "go-chat/internal/clients/sso/grpc"
 
 	"go-chat/echo"
 	"go-chat/general"
 	"go-chat/internal/app/auth"
+	"go-chat/internal/app/auth/middleware"
+	ssogrpc "go-chat/internal/clients/sso/grpc"
 	"go-chat/internal/config"
-	"go-chat/internal/lib/logger/handlers/slogpretty"
+	"go-chat/internal/lib/jwtutil"
+	"go-chat/internal/lib/logger"
 	"go-chat/internal/lib/logger/sl"
-)
-
-const (
-	envLocal = "local"
-	envDev   = "dev"
-	envProd  = "prod"
+	"go-chat/internal/storage/redis"
 )
 
 func main() {
 	cfg := config.MustLoad()
+	redisClient := redis.New(cfg.Redis.Addr, cfg.Redis.Password, cfg.Redis.DB)
+	jwtutil.SecretKey = []byte(cfg.AppSecret)
 
-	log := setupLogger(cfg.Env)
+	log := logger.SetupLogger(cfg.Env, os.Stdout)
 
 	log.Info("starting go-chat",
 		slog.String("address", cfg.Address),
@@ -52,15 +49,17 @@ func main() {
 	// Initialize the general chat server.
 	generalChat := general.NewGeneralChat()
 	// Initialize the auth handler.
-	authHandler := auth.NewAuthHandler(ssoClient)
+	authHandler := auth.NewAuthHandler(ssoClient, redisClient)
 
 	// Register the endpoints for echo and general chat.
 	http.HandleFunc("/ws/echo", echoServer.Handle)
 	http.HandleFunc("/ws/general", generalChat.Handle)
 
 	// Register the login and registration endpoints.
-	http.HandleFunc("/login", authHandler.LoginHandler)
-	http.HandleFunc("/register", authHandler.RegisterHandler)
+	http.HandleFunc("/register", middleware.CORSMiddleware(authHandler.RegisterHandler))
+	http.HandleFunc("/login", middleware.CORSMiddleware(authHandler.LoginHandler))
+	http.HandleFunc("/get-user", middleware.CORSMiddleware(authHandler.GetUserHandler))
+	http.HandleFunc("/logout", middleware.CORSMiddleware(authHandler.LogoutHandler))
 
 	// Start the broadcast routine for the general chat.
 	go generalChat.Broadcast()
@@ -68,37 +67,4 @@ func main() {
 	if err := http.ListenAndServe(cfg.Address, nil); err != nil {
 		log.Error("ListenAndServe error:", slog.String("error", err.Error()))
 	}
-}
-
-func setupLogger(env string) *slog.Logger {
-	var log *slog.Logger
-
-	switch env {
-	case envLocal:
-		log = setupPrettySlog()
-	case envDev:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout,
-				&slog.HandlerOptions{Level: slog.LevelDebug}),
-		)
-	case envProd:
-		log = slog.New(
-			slog.NewJSONHandler(os.Stdout,
-				&slog.HandlerOptions{Level: slog.LevelInfo}),
-		)
-	}
-
-	return log
-}
-
-func setupPrettySlog() *slog.Logger {
-	opts := slogpretty.PrettyHandlerOptions{
-		SlogOpts: &slog.HandlerOptions{
-			Level: slog.LevelDebug,
-		},
-	}
-
-	handler := opts.NewPrettyHandler(os.Stdout)
-
-	return slog.New(handler)
 }

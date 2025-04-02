@@ -56,12 +56,14 @@ func New(
 	}, nil
 }
 
-func (c *Client) Register(ctx context.Context, email string, password string) (int64, error) {
+func (c *Client) Register(ctx context.Context, email string, password string,
+	username string) (int64, error) {
 	const op = "grpc.Register"
 
 	resp, err := c.api.Register(ctx, &ssov1.RegisterRequest{
 		Email:    email,
 		Password: password,
+		Username: username,
 	})
 	if err != nil {
 		return 0, fmt.Errorf("%s: %w", op, err)
@@ -70,19 +72,34 @@ func (c *Client) Register(ctx context.Context, email string, password string) (i
 	return resp.GetUserId(), nil
 }
 
-func (c *Client) Login(ctx context.Context, email string, password string, appID int32) (string, error) {
+func (c *Client) Login(ctx context.Context, email string, password string,
+	username string, appID int32) (string, error) {
 	const op = "grpc.Login"
 
 	resp, err := c.api.Login(ctx, &ssov1.LoginRequest{
 		Email:    email,
 		Password: password,
-		AddId:    appID,
+		Username: username,
+		AppId:    appID,
 	})
 	if err != nil {
 		return "", fmt.Errorf("%s: %w", op, err)
 	}
 
 	return resp.GetToken(), nil
+}
+
+func (c *Client) GetUser(ctx context.Context, userID int64) (*ssov1.GetUserResponse, error) {
+	const op = "grpc.GetUserId"
+
+	resp, err := c.api.GetUser(ctx, &ssov1.GetUserRequest{
+		UserId: userID,
+	})
+	if err != nil {
+		return nil, fmt.Errorf("%s: %w", op, err)
+	}
+
+	return resp, nil
 }
 
 func (c *Client) IsAdmin(ctx context.Context, userID int64) (bool, error) {
