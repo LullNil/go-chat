@@ -15,7 +15,7 @@ export default {
     toggleTheme({ commit, state }) {
       const newTheme = !state.isDarkTheme;
       commit("setDarkTheme", newTheme);
-      // Обновляем CSS-класс на корневом элементе для применения темы
+      // update css class for dark theme
       document.documentElement.classList.toggle("dark-theme", newTheme);
     },
   },

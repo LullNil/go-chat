@@ -1,5 +1,4 @@
 const { app, ipcMain, BrowserWindow, globalShortcut } = require("electron");
-const tokenStore = require("./tokenStore");
 const path = require("node:path");
 const fs = require("fs");
 
@@ -13,6 +12,7 @@ const stateFile = path.join(app.getPath("userData"), "window-state.json");
 let windowState = {
   width: 950,
   height: 800,
+  // minWidth: 569,
 };
 
 // If the state file exists, read the saved window state
@@ -33,6 +33,7 @@ function createWindow() {
   mainWindow = new BrowserWindow({
     width: windowState.width,
     height: windowState.height,
+    // minWidth: windowState.minWidth, // TODO: Set a minimum width when build
     x: windowState.x, // Use saved x position if available
     y: windowState.y, // Use saved y position if available
     frame: false,
@@ -79,19 +80,6 @@ function saveWindowState() {
     console.error("Error saving window state:", err);
   }
 }
-
-// IPC handlers for token management
-ipcMain.handle("save-token", async (event, token) => {
-  await tokenStore.saveToken(token);
-});
-
-ipcMain.handle("get-token", async (event) => {
-  return await tokenStore.getToken();
-});
-
-ipcMain.handle("delete-token", async (event) => {
-  await tokenStore.deleteToken();
-});
 
 // IPC events for custom title bar actions
 ipcMain.on("window-minimize", (event) => {

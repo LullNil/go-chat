@@ -9,7 +9,7 @@
     >
       <!-- Chat header -->
       <div class="chat-title">
-        <button @click="emitToggleSidebar" class="menu-toggle">
+        <button @click="closeChatMobile" class="close-chat">
           <span class="close-chat-btn"
             ><svg
               class="arrow-icon"
@@ -135,8 +135,8 @@ export default {
   },
   methods: {
     // Emit event to toggle the sidebar visibility
-    emitToggleSidebar() {
-      this.$emit("toggle-sidebar");
+    closeChatMobile() {
+      this.$emit("close-chat");
     },
 
     // Establish WebSocket connection based on the active chat type

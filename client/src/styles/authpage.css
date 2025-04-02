@@ -5,37 +5,38 @@
   left: 0;
   width: 100vw;
   height: 100vh;
-  background: var(--primary-light);
-  transition: background 0.5s ease;
+  background: var(--primary-light, #f4f7f6);
+  transition: background 0.3s ease;
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   overflow-y: auto;
   user-select: none;
+  padding: 20px;
+  box-sizing: border-box;
 }
 .dark-theme .auth-container {
-  background: var(--primary-dark);
+  background: var(--primary-dark, #121212);
 }
 
-/* Authentication card with container animation */
+/* Authentication card */
 .auth-card {
   width: 100%;
   max-width: 400px;
   padding: 2rem 2.5rem;
-  background: var(--glass-effect-light, rgba(255, 255, 255, 0.9));
+  background: var(--glass-effect, rgba(255, 255, 255, 0.8));
   backdrop-filter: blur(15px);
-  border-radius: 35px;
+  -webkit-backdrop-filter: blur(15px);
+  border-radius: var(--border-radius-xl);
+  border: 1px solid var(--input-border-light, rgba(0, 0, 0, 0.08));
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.1);
-  transition: all 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-}
-.animate-container {
-  animation: containerJelly 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  transition: all 0.3s ease;
 }
 .dark-theme .auth-card {
-  background: var(--secondary-dark);
+  background: var(--glass-effect, rgba(30, 30, 30, 0.8));
+  border-color: var(--input-border-dark, rgba(255, 255, 255, 0.1));
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.3);
-  border-color: rgba(255, 255, 255, 0.05);
 }
 
 /* Header styles */
@@ -44,16 +45,14 @@
   margin-bottom: 2rem;
 }
 .auth-header h2 {
-  font-size: 1.75rem;
+  font-size: 1.5rem;
   font-weight: 600;
-  color: var(--text-light);
+  color: var(--text-light, #333);
   margin: 0;
+  letter-spacing: 0.5px;
 }
 .dark-theme .auth-header h2 {
-  color: #fff;
-}
-.dark-theme .mode-toggle {
-  color: var(--gradient-sent-start);
+  color: var(--text-dark, #e0e0e0);
 }
 
 /* Header text animation for login/registration */
@@ -91,63 +90,198 @@
 /* Input group and input styles */
 .auth-input-group {
   position: relative;
-  transition: margin-bottom 0.5s ease;
-  margin-bottom: 1.1rem !important;
+  margin-bottom: 1.2rem !important;
+  transition: margin-bottom 0.3s ease;
+}
+.auth-input-group.with-icon .auth-input {
+  padding-right: 45px;
 }
 .auth-input {
   width: 100%;
-  font-size: 1.2rem;
-  padding: 16px;
-  background: rgba(255, 255, 255, 0.1);
-  border: 1px solid rgba(0, 0, 0, 0.1);
-  border-radius: 20px;
-  transition: all 0.3s ease;
+  font-size: 1rem;
+  padding: 14px 16px;
+  background: var(--input-bg-light, rgba(240, 240, 240, 0.7));
+  border: 1px solid var(--input-border-light, rgba(0, 0, 0, 0.08));
+  border-radius: var(--border-radius-l);
+  transition: all 0.2s ease;
   outline: none;
+  color: var(--text-light, #333);
 }
 .auth-input:focus {
   outline: none;
+  border-color: var(--accent-color, #007bff);
 }
 .dark-theme .auth-input {
-  background: rgba(255, 255, 255, 0.05);
-  color: var(--text-dark);
-  border: none;
+  background: #252525;
+  color: var(--text-dark, #e0e0e0);
+  border-color: transparent;
+}
+.dark-theme .auth-input:focus {
+  border-color: var(--accent-color);
 }
 
-/* Ensure label stays above the input */
+/* Floating label */
 .auth-input-label {
   position: absolute;
-  left: 1rem;
+  left: 16px;
   top: 50%;
-  font-size: 1.2rem;
+  font-size: 1rem;
   font-weight: 400;
   transform: translateY(-50%);
   pointer-events: none;
-  color: var(--text-light);
+  color: var(--text-light-secondary, #666);
+  transition: all 0.2s ease;
   background: none;
-  padding-left: 1px;
-  z-index: 2;
+  padding: 0 4px;
+  z-index: 1;
+  opacity: 1;
+  visibility: visible;
 }
 .dark-theme .auth-input-label {
-  color: var(--text-dark);
-  font-weight: 100;
+  color: var(--text-dark-secondary, #888);
 }
+/* Label disappears only when input has text */
 .auth-input:not(:placeholder-shown) ~ .auth-input-label {
   opacity: 0;
   visibility: hidden;
+  transition: none;
+}
+.error-label {
+  color: #ff4f4f !important;
 }
 
-/* Error messages and margin transitions */
-.error-label {
-  color: #ff4f4f;
+/* Info icon styles */
+.info-icon {
+  position: absolute;
+  right: 12px;
+  top: 49%;
+  transform: translateY(-50%);
+  background: none;
+  border: none;
+  cursor: pointer;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  color: var(--text-light-secondary, #aaa);
+  transition: color 0.2s ease;
+  z-index: 2;
+  outline: none;
+  border-radius: 50%;
 }
-.dark-theme .error-label {
-  color: #ff4f4f;
+.info-icon:hover {
+  color: var(--text-light, #333);
 }
+.dark-theme .info-icon {
+  color: var(--text-dark-secondary, #777);
+}
+.dark-theme .info-icon:hover {
+  color: var(--text-dark, #eee);
+}
+.info-svg {
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.5;
+}
+
+/* Tooltip styles */
+.info-tooltip {
+  position: absolute;
+  bottom: calc(100% + 10px);
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  background-color: #ffffff;
+  border-radius: var(--border-radius-l);
+  padding: 10px 14px;
+  box-shadow: 0 5px 20px rgba(0, 0, 0, 0.15);
+  z-index: 1000;
+  transform-origin: bottom center;
+  overflow: visible;
+  color: var(--text-light, #333);
+}
+.info-tooltip::after {
+  content: "";
+  position: absolute;
+  bottom: -6px;
+  left: 50%;
+  width: 12px;
+  height: 12px;
+  background-color: #ffffff;
+  transform: translateX(-50%) rotate(45deg);
+  z-index: -1;
+}
+/* Tooltip Animation */
+.tooltip-enter-active {
+  animation: tooltip-in 0.3s cubic-bezier(0.18, 0.89, 0.32, 1.28);
+}
+.tooltip-leave-active {
+  animation: tooltip-out 0.2s ease;
+}
+@keyframes tooltip-in {
+  0% {
+    opacity: 0;
+    transform: translateX(-50%) translateY(20px) scale(0.9);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+}
+@keyframes tooltip-out {
+  from {
+    opacity: 1;
+    transform: translateX(-50%) translateY(0) scale(1);
+  }
+  to {
+    opacity: 0;
+    transform: translateX(-50%) translateY(10px) scale(0.95);
+  }
+}
+/* Dark theme Tooltip */
+.dark-theme .info-tooltip {
+  background-color: rgb(30, 30, 30);
+  color: var(--text-dark, #e0e0e0);
+  box-shadow: 0 8px 25px rgba(0, 0, 0, 0.35);
+}
+.dark-theme .info-tooltip::after {
+  background-color: rgb(30, 30, 30);
+  border-bottom-color: var(--input-border-dark, rgba(255, 255, 255, 0.1));
+  border-right-color: var(--input-border-dark, rgba(255, 255, 255, 0.1));
+}
+/* Tooltip content */
+.tooltip-content {
+  font-size: 0.85rem;
+  line-height: 1.4;
+}
+.tooltip-content ul {
+  margin: 6px 0 0 0;
+  padding-left: 18px;
+  list-style: none;
+}
+.tooltip-content li {
+  margin: 4px 0;
+  position: relative;
+  padding-left: 12px;
+}
+.tooltip-content li::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 5px;
+  height: 5px;
+  background-color: var(--accent-color);
+  border-radius: 50%;
+  transform: translateY(-50%);
+}
+
+/* Error messages */
 .error-message {
   position: absolute;
-  left: 1.1rem;
-  bottom: -1.1rem;
-  font-size: 0.875rem;
+  left: 16px;
+  top: calc(100% + 0px);
+  bottom: auto;
+  font-size: 0.8rem;
   color: #ff4f4f;
   transition: opacity 0.3s ease, transform 0.3s ease;
 }
@@ -155,23 +289,27 @@
   display: none;
 }
 
-/* Smooth appearance for extra fields with a "jelly" effect */
+/* Smooth appearance for extra fields */
 .extra-field {
   z-index: 0;
   position: relative;
   max-height: 0;
   opacity: 0;
-  transform: scaleY(0.8);
+  transform: translateY(-10px);
   transition: max-height 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
-    opacity 0.5s ease, transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    opacity 0.4s ease-out 0.1s,
+    transform 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275),
+    margin-bottom 0.5s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+  margin-bottom: 0;
 }
 .extra-field.active {
-  max-height: 200px;
+  max-height: 100px;
   opacity: 1;
-  transform: scaleY(1);
+  transform: translateY(0);
+  margin-bottom: 1.2rem;
 }
 .extra-field .auth-input-group {
-  position: relative;
+  margin-bottom: 0 !important;
 }
 
 /* Submit button styles */
@@ -179,45 +317,70 @@
   position: relative;
   z-index: 1;
   width: 100%;
-  padding: 16px;
-  background: var(--gradient-sent-end);
+  padding: 14px 16px;
+  background: var(--accent-color);
   color: white;
   border: none;
-  border-radius: 20px;
+  border-radius: var(--border-radius-l);
+  font-size: 1rem;
   font-weight: 600;
   cursor: pointer;
-  transition: all 0.3s ease;
-  margin-top: 15px;
+  transition: all 0.2s ease;
+  margin-top: 8px;
+  outline: none;
 }
 .auth-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(88, 101, 242, 0.25);
+  transform: scale(1.01);
+  filter: brightness(1.05);
+  box-shadow: 0 2px 8px rgba(var(--accent-color-rgb), 0.1);
+}
+.auth-button:active {
+  transform: scale(0.99);
+  filter: brightness(0.95);
 }
 .dark-theme .auth-button {
-  background: var(--gradient-sent-start);
+  background: var(--accent-color);
 }
 .dark-theme .auth-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 1px 4px var(--gradient-sent-start);
+  filter: brightness(1.1);
+  box-shadow: 0 2px 8px rgba(var(--accent-color-rgb), 0.15);
+}
+.dark-theme .auth-button:active {
+  transform: scale(0.99);
+  filter: brightness(0.9);
 }
 
 /* Password visibility toggle button */
 .password-toggle {
   position: absolute;
-  right: 1rem;
-  top: 50%;
+  right: 12px;
+  top: 49%;
   transform: translateY(-50%);
   background: none;
   border: none;
   cursor: pointer;
+  outline: none;
+  width: 32px;
+  height: 32px;
+  padding: 4px;
+  color: var(--text-light-secondary, #aaa);
+  border-radius: 50%;
+  transition: color 0.2s ease;
+}
+.password-toggle:hover {
+  color: var(--text-light, #333);
 }
 .eye-icon {
-  width: 24px;
-  height: 24px;
+  width: 100%;
+  height: 100%;
+  stroke-width: 1.5;
   transition: stroke 0.3s ease, transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
-.dark-theme .eye-icon {
-  stroke: #fff;
+.dark-theme .password-toggle {
+  color: var(--text-dark-secondary, #777);
+}
+.dark-theme .password-toggle:hover {
+  color: var(--text-dark, #eee);
 }
 .eye-cross {
   stroke: currentColor;
@@ -230,7 +393,7 @@
     opacity 0.15s ease;
 }
 .dark-theme .eye-cross {
-  stroke: #fff;
+  stroke: currentColor;
 }
 .eye-cross.drawn {
   stroke-dashoffset: 0;
@@ -239,34 +402,71 @@
 .eye-icon.animate-closed {
   animation: eyeElastic 0.7s ease-in-out forwards;
 }
+@keyframes eyeElastic {
+  0% {
+    transform: scale(1) rotate(0deg);
+    filter: brightness(1);
+  }
+  20% {
+    transform: scale(1.1) rotate(5deg) translateY(-2px);
+    filter: brightness(1.2);
+  }
+  40% {
+    transform: scale(0.95) rotate(-3deg) translateY(2px);
+    filter: brightness(0.9);
+  }
+  60% {
+    transform: scale(1.03) rotate(2deg) translateY(-1px);
+    filter: brightness(1.05);
+  }
+  80% {
+    transform: scale(0.98) rotate(-1deg) translateY(1px);
+    filter: brightness(0.98);
+  }
+  100% {
+    transform: scale(1) rotate(0deg) translateY(0);
+    filter: brightness(1);
+  }
+}
 
 /* Mode toggle and Forgot password link */
 .mode-toggle {
   background: none;
   border: none;
-  color: var(--gradient-sent-end);
+  color: var(--accent-color);
   cursor: pointer;
   font-weight: 500;
-  transition: opacity 0.3s ease;
+  font-size: 0.9rem;
+  transition: opacity 0.2s ease;
+  outline: none;
+  padding: 4px;
 }
 .mode-toggle:hover {
   opacity: 0.8;
+  text-decoration: underline;
 }
 .forgot-password {
   display: block;
   margin-top: 0.5rem;
-  color: var(--text-light);
+  color: var(--text-light-secondary, #666);
   text-decoration: none;
-  font-size: 0.875rem;
-  transition: color 0.5s ease;
+  font-size: 0.85rem;
+  transition: color 0.2s ease;
+}
+.forgot-password:hover {
+  color: var(--accent-color);
+  text-decoration: underline;
 }
 .dark-theme .forgot-password {
-  color: var(--text-dark);
+  color: var(--text-dark-secondary, #888);
+}
+.dark-theme .forgot-password:hover {
+  color: var(--accent-color);
 }
 
 /* Footer styles */
 .auth-footer {
-  margin-top: 1rem;
+  margin-top: 1.5rem;
   text-align: center;
 }
 
@@ -274,14 +474,15 @@
 .logo-corner {
   position: absolute;
   bottom: 16px;
-  left: 10px;
-  font-size: 1.1rem;
-  font-weight: 100;
-  color: rgba(0, 0, 0, 0.5);
+  left: 16px;
+  font-size: 0.9rem;
+  font-weight: 400;
+  color: var(--text-light-secondary, #aaa);
   z-index: 10;
+  user-select: none;
 }
 .dark-theme .logo-corner {
-  color: rgba(255, 255, 255, 0.3);
+  color: var(--text-dark-secondary, #777);
 }
 .theme-switch-corner {
   position: absolute;
@@ -289,56 +490,85 @@
   right: 10px;
   background: none;
   border: none;
-  padding: 0.5rem;
+  padding: 0;
   cursor: pointer;
   z-index: 10;
-  width: 48px;
-  height: 48px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
   display: flex;
   align-items: center;
   justify-content: center;
+  outline: none;
+  color: var(--text-light-secondary, #aaa);
+  transition: background-color 0.2s ease, color 0.2s ease;
+}
+.theme-switch-corner:hover {
+  background-color: var(--hover-bg-light, rgba(0, 0, 0, 0.05));
+  color: var(--text-light, #333);
 }
 .theme-switch-corner .theme-icon {
-  width: 32px;
-  height: 32px;
-  transition: transform 0.6s ease, stroke 0.3s ease;
-  stroke: rgba(0, 0, 0, 0.5);
+  width: 24px;
+  height: 24px;
+  transition: transform 0.4s ease, stroke 0.3s ease;
+  stroke: currentColor;
+  stroke-width: 1.8;
 }
-.dark-theme .theme-switch-corner .theme-icon {
-  stroke: rgba(255, 255, 255, 0.3);
+.dark-theme .theme-switch-corner {
+  color: var(--text-dark-secondary, #777);
+}
+.dark-theme .theme-switch-corner:hover {
+  background-color: var(--hover-bg-dark, rgba(255, 255, 255, 0.08));
+  color: var(--text-dark, #eee);
 }
 .animate-icon {
   animation: icon-pop 0.6s ease;
+}
+@keyframes icon-pop {
+  0% {
+    transform: scale(1) rotate(0deg);
+  }
+  50% {
+    transform: scale(1.2) rotate(45deg);
+  }
+  100% {
+    transform: scale(1) rotate(0deg);
+  }
 }
 
 /* Success notification styles */
 .success-notification {
   position: fixed;
-  top: 20px;
-  transform: translateY(50%);
+  top: 80px;
+  left: 50%;
+  transform: translateX(-50%);
   width: calc(100% - 40px);
   max-width: 400px;
-  padding: 15px 25px;
-  background: var(--glass-effect-light);
-  border-radius: 25px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-  z-index: 1000;
-  border: 1px solid rgba(0, 0, 0, 0.05);
+  padding: 12px 18px;
+  background: var(--glass-effect, rgba(255, 255, 255, 0.8));
+  border-radius: var(--border-radius-l);
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.15);
+  z-index: 1001;
+  border: 1px solid var(--input-border-light, rgba(0, 0, 0, 0.08));
   pointer-events: none;
 }
 .dark-theme .success-notification {
-  background: var(--secondary-dark);
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.35);
+  background: var(--glass-effect, rgba(30, 30, 30, 0.8));
+  border-color: var(--input-border-dark, rgba(255, 255, 255, 0.1));
+  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.35);
 }
 .notification-content {
   display: flex;
   align-items: center;
-  color: var(--text-light);
+  justify-content: center;
+  color: var(--text-light, #333);
   font-weight: 500;
   text-align: center;
+  font-size: 0.95rem;
+  gap: 10px;
 }
 .dark-theme .notification-content {
-  color: var(--text-dark);
+  color: var(--text-dark, #e0e0e0);
 }
 .checkmark {
   width: 28px;
@@ -390,58 +620,11 @@
 }
 .slide-fade-enter-from,
 .slide-fade-leave-to {
-  transform: translateY(-20px);
+  transform: translate(-50%, -20px);
   opacity: 0;
 }
-
-/* Key animations */
-@keyframes eyeElastic {
-  0% {
-    transform: scale(1) rotate(0deg);
-    filter: brightness(1);
-  }
-  20% {
-    transform: scale(1.1) rotate(5deg) translateY(-2px);
-    filter: brightness(1.2);
-  }
-  40% {
-    transform: scale(0.95) rotate(-3deg) translateY(2px);
-    filter: brightness(0.9);
-  }
-  60% {
-    transform: scale(1.03) rotate(2deg) translateY(-1px);
-    filter: brightness(1.05);
-  }
-  80% {
-    transform: scale(0.98) rotate(-1deg) translateY(1px);
-    filter: brightness(0.98);
-  }
-  100% {
-    transform: scale(1) rotate(0deg) translateY(0);
-    filter: brightness(1);
-  }
-}
-
-@keyframes containerJelly {
-  0% {
-    transform: scale(1);
-  }
-  50% {
-    transform: scale(1.03);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@keyframes icon-pop {
-  0% {
-    transform: scale(1) rotate(0deg);
-  }
-  50% {
-    transform: scale(1.2) rotate(45deg);
-  }
-  100% {
-    transform: scale(1) rotate(0deg);
-  }
+.slide-fade-enter-to,
+.slide-fade-leave-from {
+  transform: translateX(-50%);
+  opacity: 1;
 }

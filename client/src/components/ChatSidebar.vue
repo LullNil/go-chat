@@ -13,10 +13,17 @@
       @mousedown="initResize"
     ></div>
 
+    <!-- User Profile -->
+    <UserProfile
+      v-if="isProfileOpen"
+      :visible="isProfileOpen"
+      @close="closeProfile"
+    />
+
     <!-- Expanded Sidebar Panel Content -->
     <div v-if="isSidebarOpen" class="sidebar-panel-list">
       <!-- Sidebar header with dropdown menu trigger -->
-      <div class="sidebar-header">
+      <div class="sidebar-header" :class="{ 'search-active': isSearchActive }">
         <div
           class="plus-icon-wrapper"
           :class="{ active: isMenuOpen }"
@@ -67,8 +74,12 @@
             :class="{ 'logout-item': item.key === 'logout' }"
             @click.stop="handleMenuItemClick(item)"
           >
-            <i :class="item.icon"></i>
-            <span>{{ item.label }}</span>
+            <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+              <path :d="getIconPath(item.key)" />
+            </svg>
+            <span>{{
+              item.key === "profile" ? profileLabel : item.label
+            }}</span>
           </div>
         </div>
       </div>
@@ -115,7 +126,18 @@
 
       <!-- Bottom area for mobile screens -->
       <div class="bottom-area">
-        <button class="bi bi-gear"></button>
+        <button>
+          <svg
+            class="menu-icon"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.5"
+          >
+            <path :d="getIconPath('settings')" />
+          </svg>
+        </button>
+
         <button
           class="theme-toggle"
           @click="toggleTheme"
@@ -134,7 +156,12 @@
             <path :d="isDarkTheme ? moonIcon : sunIcon" />
           </svg>
         </button>
-        <button class="bi bi-person-circle"></button>
+
+        <button>
+          <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
+            <path :d="getIconPath('profile')" />
+          </svg>
+        </button>
       </div>
     </div>
 
@@ -190,9 +217,11 @@
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import UserProfile from "./UserProfile.vue";
 
 export default {
   name: "ChatSidebar",
+  components: { UserProfile },
   props: {
     activeChat: {
       type: String,
@@ -210,21 +239,12 @@ export default {
       isSearchActive: false,
       searchQuery: "",
       isMenuOpen: false,
+      isProfileOpen: false,
       menuItems: [
-        { icon: "bi bi-person-plus", label: "Профиль", key: "profile" },
-        {
-          icon: "bi bi-palette",
-          label: "Тема",
-          key: "theme",
-          hasDivider: true,
-        },
-        { icon: "bi bi-gear", label: "Настройки", key: "settings" },
-        {
-          icon: "bi bi-box-arrow-left",
-          label: "Выход",
-          key: "logout",
-          hasDivider: true,
-        },
+        { icon: "", label: "Профиль", key: "profile" },
+        { icon: "", label: "Тема", key: "theme", hasDivider: true },
+        { icon: "", label: "Настройки", key: "settings" },
+        { icon: "", label: "Выход", key: "logout", hasDivider: true },
       ],
       activeCategory: 0,
       categories: ["Все", "Непрочитанные", "Группы", "Избранное", "Архив"],
@@ -246,13 +266,12 @@ export default {
       animateIcon: false,
     };
   },
-
   mounted() {
     // Add scroll event listeners for chat list and minimized buttons
     if (this.$refs.chatListScroll) {
       this.$refs.chatListScroll.addEventListener(
         "scroll",
-        this.handleChatListScroll,
+        this.handleChatListScroll
       );
     }
     if (this.$refs.minimizedButtons) {
@@ -289,21 +308,35 @@ export default {
       );
     }
   },
-
   computed: {
     // Determine if the sidebar panel is open based on its width
     isSidebarOpen() {
       return this.panelWidth > this.MIN_THRESHOLD;
     },
 
-    ...mapGetters("auth", ["isAuthenticated"]),
+    ...mapGetters("auth", ["isAuthenticated", "user"]),
     ...mapGetters("theme", ["isDarkTheme"]),
+    profileLabel() {
+      return this.user?.username;
+    },
   },
-
   methods: {
     ...mapActions("auth", ["logout"]),
     ...mapActions("theme", ["toggleTheme"]),
 
+    getIconPath(key) {
+      const icons = {
+        profile:
+          "M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z",
+        theme:
+          "M12 22c5.52 0 10-4.48 10-10S17.52 2 12 2 2 6.48 2 12s4.48 10 10 10zm1-17.93c3.94.49 7 3.85 7 7.93s-3.05 7.44-7 7.93V4.07z",
+        settings:
+          "M19.14 12.94c.04-.3.06-.61.06-.94 0-.32-.02-.64-.07-.94l2.03-1.58a.49.49 0 0 0 .12-.61l-1.92-3.32a.488.488 0 0 0-.59-.22l-2.39.96c-.5-.38-1.03-.7-1.62-.94l-.36-2.54a.484.484 0 0 0-.48-.41h-3.84c-.24 0-.44.17-.47.41l-.36 2.54c-.59.24-1.13.57-1.62.94l-2.39-.96c-.22-.08-.47 0-.59.22L2.74 8.87c-.12.21-.08.47.12.61l2.03 1.58c-.05.3-.09.63-.09.94s.02.64.07.94l-2.03 1.58a.49.49 0 0 0-.12.61l1.92 3.32c.12.22.37.29.59.22l2.39-.96c.5.38 1.03.7 1.62.94l.36 2.54c.03.24.24.41.48.41h3.84c.24 0 .44-.17.47-.41l.36-2.54c.59-.24 1.13-.56 1.62-.94l2.39.96c.22.08.47 0 .59-.22l1.92-3.32c.12-.22.07-.47-.12-.61l-2.01-1.58zM12 15.6c-1.98 0-3.6-1.62-3.6-3.6s1.62-3.6 3.6-3.6 3.6 1.62 3.6 3.6-1.62 3.6-3.6 3.6z",
+        logout:
+          "M17 8l-1.41 1.41L17.17 11H9v2h8.17l-1.58 1.58L17 16l4-4-4-4zM5 5h7V3H5c-1.1 0-2 .9-2 2v14c0 1.1.9 2 2 2h7v-2H5V5z",
+      };
+      return icons[key] || "";
+    },
     // Initialize panel resizing on mousedown event
     initResize(e) {
       e.preventDefault();
@@ -318,12 +351,17 @@ export default {
       if (!this.isResizing) return;
       const panelRect = this.$refs.sidebarPanel.getBoundingClientRect();
       const newWidth = e.clientX - panelRect.left;
-      if (newWidth < this.MIN_THRESHOLD) {
-        this.panelWidth = 80;
-      } else {
-        this.panelWidth =
-          newWidth < this.SNAP_THRESHOLD ? this.SNAP_THRESHOLD : newWidth;
+      if (this.isProfileOpen) {
+        this.panelWidth = newWidth < 260 ? 260 : newWidth;
         this.lastExpandedWidth = this.panelWidth;
+      } else {
+        if (newWidth < this.MIN_THRESHOLD) {
+          this.panelWidth = 80;
+        } else {
+          this.panelWidth =
+            newWidth < this.SNAP_THRESHOLD ? this.SNAP_THRESHOLD : newWidth;
+          this.lastExpandedWidth = this.panelWidth;
+        }
       }
     },
 
@@ -366,7 +404,8 @@ export default {
           this.$router.push({ name: "AuthPage" });
           break;
         case "profile":
-          // console.log("Go to profile");
+          this.isProfileOpen = true;
+          this.isMenuOpen = false;
           break;
         case "settings":
           // console.log("Open settings");
@@ -374,7 +413,6 @@ export default {
         default:
           console.log("Dropdown item error:", item.key);
       }
-      // this.isMenuOpen = false;
     },
 
     // Handle horizontal scroll for the categories container
@@ -423,7 +461,11 @@ export default {
       this.isSearchActive = !this.isSearchActive;
       if (this.isSearchActive) {
         this.$nextTick(() => {
-          this.$refs.searchInput.focus();
+          setTimeout(() => {
+            if (this.$refs.searchInput) {
+              this.$refs.searchInput.focus();
+            }
+          }, 50);
         });
       }
     },
@@ -458,6 +500,10 @@ export default {
         header.style.boxShadow =
           scrollTop > 0 ? "0 4px 8px -2px rgba(0, 0, 0, 0.25)" : "none";
       }
+    },
+
+    closeProfile() {
+      this.isProfileOpen = false;
     },
   },
 };

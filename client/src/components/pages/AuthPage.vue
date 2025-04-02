@@ -1,6 +1,6 @@
 <template>
   <div class="auth-container">
-    <!-- Success registration notification -->
+    <!-- Success register notification -->
     <transition name="slide-fade">
       <div
         v-if="showSuccessNotification"
@@ -20,9 +20,9 @@
     <!-- Mobile error message -->
     <ErrorMessageMobile :message="errorMessage" />
 
-    <!-- Authentication card -->
+    <!-- Auth card -->
     <div class="auth-card" :class="{ 'animate-container': !isLoginMode }">
-      <!-- Header -->
+      <!-- Auth header -->
       <div class="auth-header">
         <transition name="fade-text" mode="out-in">
           <h2 :key="isLoginMode">
@@ -31,120 +31,15 @@
         </transition>
       </div>
 
-      <form @submit.prevent="handleSubmit" novalidate>
-        <!-- Username input (only for registration) -->
-        <div
-          class="extra-field username-field"
-          :class="{ active: !isLoginMode }"
-        >
-          <div class="auth-input-group">
-            <input
-              v-model="username"
-              type="text"
-              placeholder=" "
-              class="auth-input"
-              @input="clearError('username')"
-            />
-            <label
-              class="auth-input-label"
-              :class="{ 'error-label': errors.username }"
-            >
-              Имя пользователя
-            </label>
-            <ErrorMessage :message="errors.username" />
-          </div>
-        </div>
-
-        <!-- Email input group -->
-        <div class="auth-input-group">
-          <input
-            v-model="email"
-            type="email"
-            placeholder=" "
-            class="auth-input"
-            @input="clearError('email')"
-          />
-          <label
-            class="auth-input-label"
-            :class="{ 'error-label': errors.email }"
-          >
-            Почта
-          </label>
-          <ErrorMessage :message="errors.email" />
-        </div>
-
-        <!-- Password input group -->
-        <div class="auth-input-group">
-          <input
-            v-model="password"
-            :type="showPassword ? 'text' : 'password'"
-            placeholder=" "
-            class="auth-input"
-            @input="clearError('password')"
-          />
-          <label
-            class="auth-input-label"
-            :class="{ 'error-label': errors.password }"
-          >
-            Пароль
-          </label>
-
-          <!-- Password toggle button -->
-          <button type="button" class="password-toggle" @click="togglePassword">
-            <svg
-              class="eye-icon"
-              :class="{ 'animate-closed': !showPassword }"
-              viewBox="0 0 24 24"
-              fill="none"
-              stroke="currentColor"
-              stroke-width="1.5"
-              stroke-linecap="butt"
-              stroke-linejoin="round"
-            >
-              <path
-                d="M1 12c1.67-4.33 5.477-7 11-7s9.33 2.67 11 7c-1.67 4.33-5.477 7-11 7s-9.33-2.67-11-7zM12 15a3 3 0 100-6 3 3 0 000 6z"
-              />
-              <line
-                class="eye-cross"
-                :class="{ drawn: !showPassword }"
-                x1="4"
-                y1="4"
-                x2="20"
-                y2="20"
-              />
-            </svg>
-          </button>
-          <ErrorMessage :message="errors.password" />
-        </div>
-
-        <!-- Confirm Password input (only for registration) -->
-        <div
-          class="extra-field confirm-field"
-          :class="{ active: !isLoginMode }"
-        >
-          <div class="auth-input-group">
-            <input
-              v-model="confirmPassword"
-              type="password"
-              placeholder=" "
-              class="auth-input"
-              @input="clearError('confirmPassword')"
-            />
-            <label
-              class="auth-input-label"
-              :class="{ 'error-label': errors.confirmPassword }"
-            >
-              Подтвердите пароль
-            </label>
-            <ErrorMessage :message="errors.confirmPassword" />
-          </div>
-        </div>
-
-        <!-- Submit button -->
-        <button type="submit" class="auth-button">
-          {{ isLoginMode ? "Войти" : "Зарегистрироваться" }}
-        </button>
-      </form>
+      <!-- Auth form -->
+      <AuthForm
+        ref="authForm"
+        :isLoginMode="isLoginMode"
+        :serverError="serverError"
+        @auth-submit="handleAuthFormSubmit"
+        @update:errorMessage="handleErrorMessageUpdate"
+        @update:serverError="updateServerError"
+      />
     </div>
 
     <!-- Footer -->
@@ -155,9 +50,10 @@
       <a href="#" class="forgot-password">Забыли пароль?</a>
     </div>
 
-    <!-- Logo -->
+    <!-- Corner logo -->
     <div class="logo-corner">© &laquo;GoChat&raquo; 2025</div>
-    <!-- Theme switch button -->
+
+    <!-- Theme switcher -->
     <button
       class="theme-switch-corner"
       @click="toggleTheme"
@@ -179,26 +75,22 @@
 </template>
 
 <script>
-import ErrorMessage from "../ErrorMessage.vue";
+import AuthForm from "../AuthForm.vue";
 import ErrorMessageMobile from "../ErrorMessageMobile.vue";
 import { login, register } from "@/composables/useAuthAPI.js";
 
 export default {
   name: "AuthPage",
   components: {
-    ErrorMessage,
+    AuthForm,
     ErrorMessageMobile,
   },
   data() {
     return {
       isLoginMode: true,
-      username: "",
-      email: "",
-      password: "",
-      confirmPassword: "",
-      showPassword: false,
       showSuccessNotification: false,
       errorMessage: "",
+      serverError: "",
       errors: {
         username: "",
         email: "",
@@ -227,6 +119,7 @@ export default {
     },
   },
   methods: {
+    // resetErrors clears all error messages
     resetErrors() {
       this.errors = {
         username: "",
@@ -235,145 +128,95 @@ export default {
         confirmPassword: "",
       };
     },
-    clearError(field) {
-      this.errors[field] = "";
-    },
+    // Shows an error message in the mobile error message component if
+    // the window width is less than or equal to 568px
     showMobileError() {
-      const firstError = Object.values(this.errors).find((error) => error);
-      if (firstError) {
-        this.errorMessage = firstError;
-        if (this.errorTimeout) clearTimeout(this.errorTimeout);
-        this.errorTimeout = setTimeout(() => {
+      if (window.innerWidth <= 568) {
+        let messageToShow =
+          this.errorMessage ||
+          Object.values(this.errors).find((error) => error) ||
+          "";
+        if (messageToShow) {
+          this.errorMessage = messageToShow;
+          if (this.errorTimeout) {
+            clearTimeout(this.errorTimeout);
+          }
+          this.errorTimeout = setTimeout(() => {
+            this.errorMessage = "";
+          }, 3500);
+        } else {
           this.errorMessage = "";
-        }, 3500);
+        }
       }
     },
     /**
-     * Validates the form and returns true if the form is valid, false otherwise.
-     * Will update the `errors` object with any errors it finds.
-     * @returns {boolean} Whether the form is valid or not.
-     */
-    validateForm() {
-      let hasErrors = false;
-      if (!this.email.trim()) {
-        this.errors.email = "Введите почту.";
-        hasErrors = true;
-      } else if (!/.+@.+\..+/.test(this.email)) {
-        this.errors.email = "Неверный формат почты.";
-        hasErrors = true;
-      }
-      if (!this.password.trim()) {
-        this.errors.password = "Введите пароль.";
-        hasErrors = true;
-      }
-      if (!this.isLoginMode) {
-        if (!this.username.trim()) {
-          this.errors.username = "Введите имя пользователя.";
-          hasErrors = true;
-        }
-        if (this.password !== this.confirmPassword) {
-          this.errors.confirmPassword = "Пароли не совпадают.";
-          hasErrors = true;
-        }
-      }
-      return !hasErrors;
-    },
-    /**
-     * Sends authentication request to the server.
+     * Sends an authentication request to the server, either to login or
+     * register.
      *
-     * If the authentication was successful, it logs in the user via Vuex store
-     * and redirects to the main page.
+     * @param {Object} authData - The authentication data containing
+     * user credentials.
      *
-     * @throws {Error} - if the authentication request failed
+     * If the request is successful, dispatches an action to update the
+     * authentication
+     * state and redirects to the chat page if logging in, or to the same
+     * page with a query parameter "registered=true" if registering.
+     *
+     * If the request is unsuccessful, catches the error, extracts the error
+     * message from the error object, and calls the handleServerError method
+     * of the AuthForm component to display the error message.
      */
-    async sendAuthRequest() {
+    async sendAuthRequest(authData) {
       const APP_ID = 1;
-      const authData = {
-        email: this.email,
-        password: this.password,
+      const requestData = {
         app_id: APP_ID,
-        ...(this.isLoginMode ? {} : { username: this.username }),
+        ...authData,
       };
-
       try {
         let data;
         if (this.isLoginMode) {
-          // When logging in, expect a JWT token
-          data = await login(authData);
-          console.log("accepted token:", data.token);
-          await this.$store.dispatch("auth/login", data);
+          data = await login(requestData);
+          console.log("login:", data);
+          // const userData = await getUser();
+          // console.log("sendAuthRequest: getUser data", userData);
           this.$router.push("/");
         } else {
-          // When registering, expect a userId or success flag to go to the login page
-          data = await register(authData);
-          console.log("uid:", data.userId, "status:", data.status);
+          data = await register(requestData);
+          console.log("register:", data);
           this.$router.replace({
             path: "/auth",
             query: { registered: "true" },
           });
           this.isLoginMode = true;
         }
+        this.serverError = "";
       } catch (error) {
-        this.handleAuthError(error, this.isLoginMode);
+        console.error(error);
+        let serverError = "Authentication error";
+        try {
+          const errData = JSON.parse(error.message);
+          serverError = errData.error || serverError;
+        } catch (e) {
+          serverError = error.message || serverError;
+        }
+        this.serverError = serverError;
+        this.$refs.authForm.handleServerError(serverError);
       }
     },
 
-    handleAuthError(error, isLoginMode) {
-      console.error("Error sending authentication request:", error);
-      let serverError = "Authentication error";
-
-      // Trying to parse error in JSON format
-      try {
-        const errData = JSON.parse(error.message);
-        serverError = errData.error || serverError;
-      } catch (e) {
-        serverError = error.message || serverError;
-      }
-
-      // Mapping server messages to user-friendly signatures
-      const errorMap = {
-        "user already exists": "Пользователь уже существует.",
-        "invalid email or password": "Неверный логин или пароль.",
-        // Add additional mappings if needed
-      };
-
-      let displayError = serverError;
-      const lowerError = serverError.toLowerCase();
-      Object.keys(errorMap).forEach((key) => {
-        if (lowerError.includes(key)) {
-          displayError = errorMap[key];
-        }
-      });
-
-      // Distribute the error across fields or set a global message
-      if (isLoginMode) {
-        if (lowerError.includes("email")) {
-          this.errors.email = displayError;
-        } else if (lowerError.includes("password")) {
-          this.errors.password = displayError;
-        } else {
-          this.errorMessage = displayError;
-        }
-      } else {
-        if (lowerError.includes("user already exists")) {
-          this.errors.username = displayError;
-        } else if (lowerError.includes("email")) {
-          this.errors.email = displayError;
-        } else if (lowerError.includes("password")) {
-          this.errors.password = displayError;
-        } else {
-          this.errorMessage = displayError;
-        }
-      }
-      this.showMobileError();
-    },
-    handleSubmit() {
+    handleAuthFormSubmit(authData) {
       this.resetErrors();
-      if (!this.validateForm()) {
+      if (!authData) {
         this.showMobileError();
         return;
       }
-      this.sendAuthRequest();
+      this.sendAuthRequest(authData);
+    },
+    handleErrorMessageUpdate(message) {
+      this.errorMessage = message;
+      this.showMobileError();
+    },
+    updateServerError(newError) {
+      this.serverError = newError;
     },
     handleRegistration() {
       if (this.$route.query.registered === "true") {
@@ -386,14 +229,8 @@ export default {
     },
     toggleMode() {
       this.resetErrors();
-      this.username = "";
-      this.email = "";
-      this.password = "";
-      this.confirmPassword = "";
       this.isLoginMode = !this.isLoginMode;
-    },
-    togglePassword() {
-      this.showPassword = !this.showPassword;
+      this.serverError = "";
     },
     toggleTheme() {
       this.$store.dispatch("theme/toggleTheme");

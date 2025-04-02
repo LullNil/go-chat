@@ -7,7 +7,6 @@
   grid-template-columns: auto 1fr;
   width: 100vw;
   height: 100vh;
-  padding: var(--outer-padding);
   box-sizing: border-box;
   background: var(--primary-light);
   overflow: hidden;

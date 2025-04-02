@@ -18,9 +18,13 @@ html,
 body {
   width: 100%;
   height: 100%;
-  background: var(--bg-color);
-  color: var(--text-color);
   overflow: hidden;
+  background: var(--primary-light, #f4f7f6);
+}
+
+.dark-theme html,
+body {
+  background-color: var(--primary-dark);
 }
 
 a {

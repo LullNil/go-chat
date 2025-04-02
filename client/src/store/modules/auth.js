@@ -1,3 +1,5 @@
+import { getUser, logout } from "@/composables/useAuthAPI";
+
 export default {
   namespaced: true,
   state: {
@@ -7,38 +9,31 @@ export default {
   mutations: {
     setAuth(state, payload) {
       state.isAuthenticated = payload.isAuthenticated;
-      state.token = payload.token || null;
+      state.user = payload.user || null;
     },
   },
   actions: {
     // Initializing authentication state when the application starts
     async initAuth({ commit }) {
       try {
-        const token = await window.electronAPI.getToken();
-        console.log("Loaded token from secure store:", token);
-        if (token) {
-          commit("setAuth", { isAuthenticated: true, token });
+        const userData = await getUser();
+        commit("setAuth", { isAuthenticated: true, user: userData });
+      } catch (error) {
+        // If the error is due to a missing cookie, the user is not authenticated
+        if (error.message.includes("named cookie not present")) {
+          console.warn("User is not authenticated.");
+          commit("setAuth", { isAuthenticated: false, user: null });
         } else {
-          commit("setAuth", { isAuthenticated: false, token: null });
+          console.error("Error initializing auth:", error);
+          commit("setAuth", { isAuthenticated: false, user: null });
         }
-      } catch (error) {
-        console.error("Error initializing auth:", error);
-        commit("setAuth", { isAuthenticated: false, token: null });
       }
     },
-    async login({ commit }, data) {
-      try {
-        // data.token received from server after successful login
-        await window.electronAPI.saveToken(data.token);
-        commit("setAuth", { isAuthenticated: true, token: data.token });
-      } catch (error) {
-        console.error("Error during login:", error);
-      }
-    },
+
     async logout({ commit }) {
       try {
-        await window.electronAPI.deleteToken();
-        commit("setAuth", { isAuthenticated: false, token: null });
+        await logout();
+        commit("setAuth", { isAuthenticated: false, user: null });
       } catch (error) {
         console.error("Error during logout:", error);
       }
@@ -46,6 +41,6 @@ export default {
   },
   getters: {
     isAuthenticated: (state) => state.isAuthenticated,
-    token: (state) => state.token,
+    user: (state) => state.user,
   },
 };

@@ -1,45 +1,211 @@
 :root {
-  --primary-light: #f7f9fc;
-  --secondary-light: #e2e8f0;
-  --text-light: #333333;
+  --bg-primary-light: #f0f2f5;
+  --bg-secondary-light: #ffffff;
+  --bg-glass-light: rgba(255, 255, 255, 0.88);
+  --text-primary-light: #050505;
+  --text-secondary-light: #65676b;
+  --text-placeholder-light: #8a8d91;
+  --border-light: #d0d2d6;
+  --shadow-light: 0 6px 18px rgba(0, 0, 0, 0.08);
+  --accent-color-light: #17a2b8;
+  --accent-color-rgb-light: 23, 162, 184;
+  --title-color-light: #050505;
 
-  /* Light Theme Variables */
-  --glass-effect-light: rgba(255, 255, 255, 0.6);
-  --glass-effect: var(--glass-effect-light);
+  /* Component Specific - Light */
+  --msg-sent-bg-light: #d7ecff;
+  --msg-sent-text-light: #1a1a1a;
+  --msg-received-bg-light: #ffffff;
+  --msg-received-text-light: #1a1a1a;
+  --input-bg-light: rgba(240, 240, 240, 0.7); /* Primarily for Auth Page */
+  --input-border-light: rgba(0, 0, 0, 0.08); /* Primarily for Auth Page */
+  --hover-bg-light: rgba(0, 0, 0, 0.04);
+  --active-bg-light: rgba(0, 0, 0, 0.06);
+  --avatar-bg-light: #e4e6eb;
+  --avatar-placeholder-bg-light: linear-gradient(135deg, #eef2f7, #d8dde4);
+  --avatar-shadow-light: 0 4px 15px rgba(0, 0, 0, 0.1);
+  --btn-icon-color-light: #4a4a4a;
+  --btn-bg-hover-light: var(--bg-secondary-light);
+  --btn-bg-active-light: var(--bg-secondary-light);
+  --btn-shadow-hover-light: 0 3px 8px rgba(0, 0, 0, 0.12);
+  --btn-shadow-active-light: inset 0 1px 3px rgba(0, 0, 0, 0.1);
+  --btn-shadow: 0 2px 5px rgba(0, 0, 0, 0.15); /* General button shadow (sidebar) */
 
-  /* Gradient Accents (Light) */
-  --gradient-sent-start: #4c9bf5;
-  --gradient-sent-end: #4a89e0;
-  --gradient-received-start: #f4f9fb;
-  --gradient-received-end: #edf5f9;
+  /* Status/Action Colors - Light */
+  --color-danger-light: #dc3545;
+  --color-danger-rgb-light: 220, 53, 69;
+  --color-logout-light: var(
+    --color-danger-light
+  ); /* Use danger color for logout */
+  --color-logout-rgb-light: var(--color-danger-rgb-light);
 
-  --text-sent-light: #ffffff;
-  --text-received-light: #161e25;
+  /* Dimensions & Sizing */
+  --border-radius-s: 8px;
+  --border-radius-m: 12px;
+  --border-radius-l: 18px;
+  --border-radius-xl: 24px;
+  --border-radius-round: 50%;
+  --glass-blur: 12px;
+  --scrollbar-width: 8px;
+  --scrollbar-width-thin: 6px;
 
-  --gradient-sent-border: rgba(255, 255, 255, 0.2);
-  --gradient-received-border: rgba(0, 0, 0, 0.05);
+  /* Transitions & Animations */
+  --transition-duration-fast: 0.15s;
+  --transition-duration-default: 0.25s;
+  --transition-easing-default: ease-out;
+  --transition-fast: all var(--transition-duration-fast)
+    var(--transition-easing-default);
+  --transition-default: all var(--transition-duration-default)
+    var(--transition-easing-default);
+  --transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --btn-transition-duration-hover: 0.2s;
+  --btn-transition-duration-active: 0.15s;
+  --btn-transition-easing: ease-out;
 
-  /* Animations */
-  --transition-default: all 0.4s cubic-bezier(0.25, 0.8, 0.25, 1);
+  /* Scrollbar - Light */
+  --scrollbar-thumb-bg-light: rgba(0, 0, 0, 0.25);
+  --scrollbar-thumb-bg-hover-light: rgba(0, 0, 0, 0.35);
+  --scrollbar-track-bg-light: transparent;
 
-  /* Dark Theme Base */
-  --text-dark: #e0e0e0;
-  --message-shadow-dark: 0 4px 6px -1px rgba(0, 0, 0, 0.3);
+  /* --- Default Assignments (Light Theme) --- */
+  --bg-primary: var(--bg-primary-light);
+  --bg-secondary: var(--bg-secondary-light);
+  --bg-glass: var(--bg-glass-light);
+  --text-primary: var(--text-primary-light);
+  --text-secondary: var(--text-secondary-light);
+  --text-placeholder: var(--text-placeholder-light);
+  --border-color: var(--border-light);
+  --shadow-color: var(--shadow-light);
+  --msg-sent-bg: var(--msg-sent-bg-light);
+  --msg-sent-text: var(--msg-sent-text-light);
+  --msg-received-bg: var(--msg-received-bg-light);
+  --msg-received-text: var(--msg-received-text-light);
+  --accent-color: var(--accent-color-light);
+  --accent-color-rgb: var(--accent-color-rgb-light);
+  --title-color: var(--title-color-light);
+  --input-bg: var(
+    --input-bg-light
+  ); /* Default input uses Auth Page's light var */
+  --input-border: var(--input-border-light); /* Default input border */
+  --hover-bg: var(--hover-bg-light);
+  --active-bg: var(--active-bg-light);
+  --avatar-bg: var(--avatar-bg-light);
+  --scrollbar-thumb-bg: var(--scrollbar-thumb-bg-light);
+  --scrollbar-thumb-bg-hover: var(--scrollbar-thumb-bg-hover-light);
+  --scrollbar-track-bg: var(--scrollbar-track-bg-light);
+  --color-danger: var(--color-danger-light);
+  --color-danger-rgb: var(--color-danger-rgb-light);
+  --color-logout: var(--color-logout-light);
+  --color-logout-rgb: var(--color-logout-rgb-light);
+  --avatar-placeholder-bg: var(--avatar-placeholder-bg-light);
+  --avatar-shadow: var(--avatar-shadow-light);
+  --btn-icon-color: var(--btn-icon-color-light);
+  --btn-icon-color-hover: var(
+    --btn-icon-color-light
+  ); /* Assuming hover doesn't change icon color */
+  --btn-icon-color-active: var(
+    --btn-icon-color-light
+  ); /* Assuming active doesn't change icon color */
+  --btn-bg-hover: var(--btn-bg-hover-light);
+  --btn-bg-active: var(--btn-bg-active-light);
+  --btn-shadow-hover: var(--btn-shadow-hover-light);
+  --btn-shadow-active: var(--btn-shadow-active-light);
+
+  /* Auth Page Specific (kept separate for clarity, may not be used elsewhere) */
+  --primary-light: #f4f7f6;
+  --glass-effect: rgba(255, 255, 255, 0.8);
+  --text-light: #333;
+  --text-light-secondary: #666;
+  /* --accent-color: #007bff; */ /* Using the sidebar accent color as default */
+  /* --accent-color-rgb: 0, 123, 255; */
 }
 
-/* Dark Theme Overrides */
 .dark-theme {
-  --primary-dark: #191a1b;
-  --secondary-dark: #232526;
-  --text-dark: #e0e0e0;
+  /* --- Dark Theme Palette --- */
+  --bg-primary-dark: #18191a;
+  --bg-secondary-dark: #1e1e1e; /* Adjusted for consistency */
+  --bg-glass-dark: rgba(30, 30, 30, 0.85);
+  --text-primary-dark: #e4e6eb;
+  --text-secondary-dark: #b0b3b8;
+  --text-placeholder-dark: #7a7d80;
+  --border-dark: rgba(255, 255, 255, 0.08); /* Adjusted for consistency */
+  --shadow-dark: 0 8px 24px rgba(0, 0, 0, 0.6);
+  --accent-color-dark: #4cb1c7;
+  --accent-color-rgb-dark: 76, 177, 199;
+  --title-color-dark: var(--text-primary-dark);
 
-  /* Gradient Accents (Dark) */
-  --gradient-sent-start: #2962ff;
-  --gradient-sent-end: #4a88e0d2;
-  --gradient-received-start: rgba(255, 255, 255, 0.05);
-  --gradient-received-end: rgba(255, 255, 255, 0.08);
+  /* Component Specific - Dark */
+  --msg-sent-bg-dark: #183348;
+  --msg-sent-text-dark: #eaeaea;
+  --msg-received-bg-dark: #2c2c2e;
+  --msg-received-text-dark: var(--text-primary-dark);
+  --input-bg-dark: #252525; /* Darker input bg used in Auth Page */
+  --input-border-dark: rgba(255, 255, 255, 0.1); /* Auth page input border */
+  --hover-bg-dark: rgba(255, 255, 255, 0.08);
+  --active-bg-dark: rgba(255, 255, 255, 0.1);
+  --avatar-bg-dark: #3a3b3c;
+  --avatar-placeholder-bg-dark: linear-gradient(135deg, #3a3f44, #2a2d30);
+  --avatar-shadow-dark: 0 4px 15px rgba(0, 0, 0, 0.3);
+  --btn-icon-color-dark: #ffffff;
+  --btn-bg-hover-dark: #252525;
+  --btn-bg-active-dark: #252525;
+  --btn-shadow-hover-dark: 0 3px 8px rgba(0, 0, 0, 0.4);
+  --btn-shadow-active-dark: inset 0 1px 2px rgba(0, 0, 0, 0.3);
+  --btn-shadow: 0 3px 8px rgba(0, 0, 0, 0.4); /* General button shadow (sidebar) - Dark */
 
-  --text-received-dark: #ffffff;
-  --gradient-sent-border: rgba(255, 255, 255, 0.12);
-  --gradient-received-border: rgba(255, 255, 255, 0.01);
+  /* Status/Action Colors - Dark */
+  --color-danger-dark: #e85260;
+  --color-danger-rgb-dark: 232, 82, 96;
+
+  /* Scrollbar - Dark */
+  --scrollbar-thumb-bg-dark: rgba(255, 255, 255, 0.2);
+  --scrollbar-thumb-bg-hover-dark: rgba(255, 255, 255, 0.35);
+  --scrollbar-track-bg-dark: transparent;
+
+  /* --- Override Defaults (Dark Theme) --- */
+  --bg-primary: var(--bg-primary-dark);
+  --bg-secondary: var(--bg-secondary-dark);
+  --bg-glass: var(--bg-glass-dark);
+  --text-primary: var(--text-primary-dark);
+  --text-secondary: var(--text-secondary-dark);
+  --text-placeholder: var(--text-placeholder-dark);
+  --border-color: var(--border-dark);
+  --shadow-color: var(--shadow-dark);
+  --msg-sent-bg: var(--msg-sent-bg-dark);
+  --msg-sent-text: var(--msg-sent-text-dark);
+  --msg-received-bg: var(--msg-received-bg-dark);
+  --msg-received-text: var(--msg-received-text-dark);
+  --accent-color: var(--accent-color-dark);
+  --accent-color-rgb: var(--accent-color-rgb-dark);
+  --title-color: var(--title-color-dark);
+  --input-bg: var(--input-bg-dark);
+  --input-border: var(--input-border-dark);
+  --hover-bg: var(--hover-bg-dark);
+  --active-bg: var(--active-bg-dark);
+  --avatar-bg: var(--avatar-bg-dark);
+  --scrollbar-thumb-bg: var(--scrollbar-thumb-bg-dark);
+  --scrollbar-thumb-bg-hover: var(--scrollbar-thumb-bg-hover-dark);
+  --scrollbar-track-bg: var(--scrollbar-track-bg-dark);
+  --color-danger: var(--color-danger-dark);
+  --color-danger-rgb: var(--color-danger-rgb-dark);
+  --color-logout: var(--color-logout-dark);
+  --color-logout-rgb: var(--color-logout-rgb-dark);
+  --avatar-placeholder-bg: var(--avatar-placeholder-bg-dark);
+  --avatar-shadow: var(--avatar-shadow-dark);
+  --btn-icon-color: var(--btn-icon-color-dark);
+  --btn-icon-color-hover: var(
+    --btn-icon-color-dark
+  ); /* Assuming hover doesn't change icon color */
+  --btn-icon-color-active: var(
+    --btn-icon-color-dark
+  ); /* Assuming active doesn't change icon color */
+  --btn-bg-hover: var(--btn-bg-hover-dark);
+  --btn-bg-active: var(--btn-bg-active-dark);
+  --btn-shadow-hover: var(--btn-shadow-hover-dark);
+  --btn-shadow-active: var(--btn-shadow-active-dark);
+
+  /* Auth Page Specific (Dark) */
+  --primary-dark: #121212;
+  --glass-effect: rgba(30, 30, 30, 0.8);
+  --text-dark: #e0e0e0; /* Specific text color from Auth page */
+  --text-dark-secondary: #888; /* Specific secondary text color from Auth page */
 }

@@ -1,4 +1,4 @@
-import { createRouter, createWebHistory } from "vue-router";
+import { createRouter, createWebHashHistory } from "vue-router";
 import AuthPage from "../components/pages/AuthPage.vue";
 import ChatPage from "../components/pages/ChatPage.vue";
 import store from "../store";
@@ -15,7 +15,6 @@ const routes = [
     name: "AuthPage",
     component: AuthPage,
   },
-  // forbidden routes redirection
   {
     path: "/:catchAll(.*)",
     redirect: "/auth",
@@ -23,7 +22,7 @@ const routes = [
 ];
 
 const router = createRouter({
-  history: createWebHistory(),
+  history: createWebHashHistory(), // Usee hash mode for Electron
   routes,
 });
 

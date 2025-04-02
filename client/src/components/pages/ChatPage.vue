@@ -14,7 +14,6 @@
       v-if="!isMobile || (isMobile && activeChat)"
       :activeChat="activeChat"
       :isMobile="isMobile"
-      @toggle-sidebar="closeChat"
       @close-chat="closeChat"
       key="chatWindow"
     />
@@ -37,7 +36,7 @@ export default {
   computed: {
     // Determine if the device is mobile based on window width
     isMobile() {
-      return this.windowWidth < 768;
+      return this.windowWidth < 568;
     },
   },
   mounted() {

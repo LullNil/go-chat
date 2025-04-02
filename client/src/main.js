@@ -9,6 +9,7 @@ import "bootstrap-icons/font/bootstrap-icons.css"; // to use bootstrap icons
 
 // Import CSS style files
 import "@/styles/variables.css";
+import "@/styles/global.css";
 import "@/styles/layout.css";
 import "@/styles/animations.css";
 import "@/styles/responsive.css";
