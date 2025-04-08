@@ -4,6 +4,7 @@ http_server:
   address: "localhost:8081"
   timeout: 5s
   idle_timeout: 60s
+  shutdown_timeout: 10s
 clients:
   sso:
     address: "localhost:50051"
@@ -14,3 +15,7 @@ redis:
   addr: "localhost:6379"
   password: ""
   db: 0
+  sso_cache_ttl: 10m
+  profile_cache_ttl: 10m
+postgres:
+  dsn: "postgresql://gochat:postgres@localhost:5433/gochat_db?sslmode=disable"

@@ -6,104 +6,127 @@ function buildUrl(endpoint) {
 }
 
 /**
- * Makes an asynchronous POST request to the specified URL with the provided
- * authentication data.
+ * Sends a POST request to the specified URL with the given body data.
  *
- * @param {string} url - The URL to which the request is sent.
- * @param {Object} authData - The authentication data to be sent in the
- * request body.
- *
- * @returns {Promise<Object>} - A promise that resolves with the JSON-parsed
- * response data if the request is successful.
- *
- * @throws {Error} - Throws an error if the server response is not successful,
- * including the error information from the server.
+ * @param {string} url - The URL to send the request to.
+ * @param {Object} bodyData - The data to send in the request body.
+ * @returns {Promise<Object>} - A promise that resolves with the response data from the server.
+ * @throws {Error|Object} - Throws an error object if the request fails.
  */
-async function request(url, authData) {
+async function postRequest(url, bodyData) {
   const response = await fetch(url, {
     method: "POST",
     headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(authData),
+    body: JSON.stringify(bodyData),
     credentials: "include",
   });
   const data = await response.json();
   if (!response.ok) {
-    // Throws error info from server
     throw new Error(JSON.stringify(data));
   }
   return data;
 }
 
 /**
- * Sends a login request to the server with the provided authentication data
- * and expects JWT-token.
+ * Sends a request to the specified URL with the given method and body data.
  *
- * @param {Object} authData - The authentication data containing user
- * credentials.
- * @returns {Promise<Object>} - A promise that resolves with the server
- * response containing a token if successful.
- * @throws {Error} - Throws an error if the server response is not successful.
+ * @param {string} url - The URL to send the request to.
+ * @param {string} method - The HTTP method to use (e.g., "POST", "PUT", etc.).
+ * @param {Object} bodyData - The data to send in the request body.
+ * @returns {Promise<Object>} - A promise that resolves with the response data from the server.
+ * @throws {Error|Object} - Throws an error object if the request fails.
  */
-
-export async function login(authData) {
-  return await request(buildUrl("/login"), authData);
+async function requestWithBody(url, method, bodyData) {
+  try {
+    const response = await fetch(url, {
+      method: method.toUpperCase(), // PUT, POST, etc.
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(bodyData),
+      credentials: "include",
+    });
+    const data = await response.json();
+    if (!response.ok) {
+      console.error(`API Error (${response.status}):`, data);
+      throw { status: response.status, data: data };
+    }
+    return data;
+  } catch (error) {
+    console.error(`Request failed [${method} ${url}]:`, error);
+    throw error;
+  }
 }
 
 /**
- * Sends a registration request to the server with the provided authentication
- * data and expects a success response.
+ * Registers a new user with the given authentication data.
  *
- * @param {Object} authData - The authentication data containing
- * user credentials.
- * @returns {Promise<Object>} - A promise that resolves with the server
- * response if successful.
- * @throws {Error} - Throws an error if the server response is not successful.
+ * @param {Object} authData - An object containing the authentication data
+ *   (e.g., { email, password, username }).
+ * @returns {Promise<Object>} - A promise that resolves with the response data
+ *   from the server.
+ * @throws {Error|Object} - Throws an error object if the request fails.
  */
 export async function register(authData) {
-  return await request(buildUrl("/register"), authData);
+  return await postRequest(buildUrl("/api/auth/register"), authData);
 }
 
 /**
- * Sends a GET request to the server to obtain the data of the currently
- * authenticated user.
+ * Logs in an existing user with the given authentication data.
  *
- * @returns {Promise<Object>} - A promise that resolves with the server
- * response containing user data if successful.
- * @throws {Error} - Throws an error if the server response is not successful.
+ * @param {Object} authData - An object containing the authentication data
+ *   (e.g., { email, password, username }).
+ * @returns {Promise<Object>} - A promise that resolves with the response data
+ *   from the server.
+ * @throws {Error|Object} - Throws an error object if the request fails.
  */
-export async function getUser() {
-  const response = await fetch(buildUrl("/get-user"), {
-    method: "GET",
-    headers: { "Content-Type": "application/json" },
-    credentials: "include",
-  });
-  const data = await response.json();
-  if (!response.ok) {
-    // Throws error info from server
-    throw new Error(JSON.stringify(data));
-  }
-  return data;
+export async function login(authData) {
+  return await postRequest(buildUrl("/api/auth/login"), authData);
 }
 
 /**
- * Sends a logout request to the server. This will invalidate the
- * authentication token on the server and clear the token stored on the
- * client.
+ * Logs out the currently authenticated user and invalidates their
+ * authentication cookie.
  *
- * @returns {Promise<Object>} - A promise that resolves with the server
- * response if successful.
- * @throws {Error} - Throws an error if the server response is not successful.
+ * @returns {Promise<void>}
+ * @throws {Error} - Throws an error if the request fails.
  */
 export async function logout() {
-  const response = await fetch(buildUrl("/logout"), {
+  return await postRequest(buildUrl("/api/auth/logout"), {});
+}
+
+/**
+ * Fetches the profile of the currently authenticated user.
+ *
+ * @returns {Promise<Object>} - A promise that resolves to the user's profile data.
+ * @throws {Error} - Throws an error if the request fails.
+ */
+
+export async function getUserProfile() {
+  const response = await fetch(buildUrl("/api/users/me/profile"), {
     method: "GET",
     headers: { "Content-Type": "application/json" },
     credentials: "include",
   });
   const data = await response.json();
   if (!response.ok) {
-    // Throws error info from server
     throw new Error(JSON.stringify(data));
   }
   return data;
 }
+
+/**
+ * Sends a PUT request to update the currently authenticated user's profile.
+ *
+ * @param {Object} profileData - The profile data to update (e.g., { firstName, lastName }).
+ * @returns {Promise<Object>} - A promise that resolves with the updated user data from the server.
+ * @throws {Error|Object} - Throws an error object if the request fails.
+ */
+export async function updateUserProfile(profileData) {
+  return await requestWithBody(
+    buildUrl("/api/users/me/profile"),
+    "PUT",
+    profileData
+  );
+}
+
+// TODO: Add a function to upload an avatar
+// export async function uploadAvatar(formData) { ... }

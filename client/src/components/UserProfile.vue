@@ -1,6 +1,6 @@
 <template>
   <!-- Profile page -->
-  <div class="user-profile">
+  <div v-if="!isProfileEditMode" class="user-profile">
     <div class="content">
       <!-- Profile header -->
       <div class="profile-header">
@@ -34,14 +34,14 @@
         </button>
 
         <!-- Edit profile -->
-        <span class="profile-edit">Изм.</span>
+        <span class="profile-edit" @click="switchToEditMode">Изм.</span>
       </div>
 
       <!-- Profile content -->
       <div class="profile-content">
         <div class="avatar"></div>
+        <div class="user-full-name" v-if="userFullName">{{ userFullName }}</div>
         <div class="username">@{{ user?.username }}</div>
-        <div class="user-email">{{ user?.email }}</div>
       </div>
 
       <!-- Profile list preferences -->
@@ -83,7 +83,7 @@
           </div>
 
           <!-- Profile and app settings -->
-          <div class="menu-item-container has-divider">
+          <div class="menu-item-container">
             <button class="profile-list-button" @click="toggleTheme">
               <span>Внешний вид</span>
             </button>
@@ -99,7 +99,7 @@
           </div>
 
           <!-- Info -->
-          <div class="menu-item-container has-divider">
+          <div class="menu-item-container">
             <button class="profile-list-button">
               <span>Помощь</span>
             </button>
@@ -109,7 +109,7 @@
           </div>
 
           <!-- Logout -->
-          <div class="menu-item-container has-divider">
+          <div class="menu-item-container">
             <button class="profile-list-button logout-button" @click="logout">
               <svg class="menu-icon" viewBox="0 0 24 24" fill="currentColor">
                 <path
@@ -123,21 +123,43 @@
       </div>
     </div>
   </div>
+
+  <!-- Edit profile page -->
+  <UserProfileEdit
+    v-else
+    :current-user="user"
+    @cancel="switchToViewMode"
+    @save="handleSave"
+  />
 </template>
 
 <script>
 import { mapGetters, mapActions } from "vuex";
+import UserProfileEdit from "./UserProfileEdit.vue";
 export default {
   name: "UserProfile",
-  props: {
-    visible: {
-      type: Boolean,
-      default: false,
-    },
+  components: { UserProfileEdit },
+  data() {
+    return {
+      isProfileEditMode: false,
+    };
   },
   computed: {
     ...mapGetters("auth", ["user"]),
     ...mapGetters("theme", ["isDarkTheme"]),
+
+    userFullName() {
+      if (!this.user) return "";
+      const { firstName, lastName } = this.user;
+      return [firstName, lastName].filter(Boolean).join(" ").trim() || null;
+    },
+  },
+  watch: {
+    user(newUser) {
+      if (!newUser) {
+        this.isProfileEditMode = false;
+      }
+    },
   },
   methods: {
     ...mapActions("theme", ["toggleTheme"]),
@@ -145,13 +167,21 @@ export default {
     closeProfile() {
       this.$emit("close");
     },
+    switchToEditMode() {
+      this.isProfileEditMode = true;
+    },
+    switchToViewMode() {
+      this.isProfileEditMode = false;
+    },
+    handleSave() {
+      this.isProfileEditMode = false;
+    },
     addAccount() {
       // add account action here
     },
     openSettings() {
       // open settings page
     },
-    // logout
     logout() {
       this.$store.dispatch("auth/logout");
       this.$router.push({ name: "AuthPage" });

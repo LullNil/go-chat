@@ -1,0 +1,287 @@
+/* Profile Edit Header */
+.profile-header {
+  padding: 12px 10px;
+}
+
+.profile-header .header-button {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 8px;
+  border-radius: var(--border-radius-l);
+  transition: background-color var(--transition-duration-fast)
+      var(--transition-easing-default),
+    opacity var(--transition-duration-fast) var(--transition-easing-default);
+  flex-shrink: 0;
+  white-space: nowrap;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 30px;
+  box-sizing: border-box;
+}
+.profile-header .header-button:hover:not(:disabled) {
+  background-color: var(--hover-bg);
+}
+.profile-header .header-button:active:not(:disabled) {
+  background-color: var(--active-bg);
+}
+.profile-header .save-button {
+  min-width: 70px;
+  text-align: center;
+}
+
+/* Spinner Styles */
+.button-spinner-svg {
+  width: 20px;
+  height: 20px;
+  animation: svg-rotate 2s linear infinite;
+  transform-origin: center center;
+}
+.save-button .button-spinner-svg {
+  margin: 0 auto;
+}
+.spinner-path {
+  stroke: var(--accent-color);
+  stroke-linecap: round;
+  animation: svg-dash 1.5s ease-in-out infinite;
+}
+
+/* Button styles in loading state */
+.save-button.is-loading {
+  opacity: 0.9;
+  cursor: default;
+}
+.save-button.is-loading:hover,
+.save-button.is-loading:active {
+  background-color: transparent;
+}
+
+@keyframes svg-rotate {
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes svg-dash {
+  0% {
+    stroke-dasharray: 1, 200;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -35px;
+  }
+  100% {
+    stroke-dasharray: 89, 200;
+    stroke-dashoffset: -124px;
+  }
+}
+
+/* Header wrapper */
+.header-title-wrapper {
+  flex-grow: 1;
+  text-align: center;
+  overflow: hidden;
+  margin: 0 5px;
+}
+
+.header-title {
+  display: inline-block;
+  font-size: 0.95rem;
+  font-weight: 600;
+  color: var(--text-primary);
+  user-select: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
+  vertical-align: middle;
+}
+
+/* Scrollable Area & Avatar */
+.edit-scroll {
+  flex: 1 1 auto;
+  overflow-y: auto;
+  overflow-x: hidden;
+  position: relative;
+  scroll-behavior: smooth;
+  padding-top: 0;
+}
+.edit-scroll::-webkit-scrollbar {
+  width: 5px;
+}
+.edit-scroll::-webkit-scrollbar-thumb {
+  background-color: var(--text-secondary);
+  border-radius: 3px;
+}
+.edit-scroll::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+/* Avatar Section */
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+.avatar-initials {
+  font-size: 3rem;
+  font-weight: 600;
+  color: var(--bg-primary);
+  user-select: none;
+}
+.edit-avatar-area {
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border-color);
+  margin-bottom: 16px;
+}
+.avatar-section-edit {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 10px;
+}
+.avatar.large-avatar {
+  width: 100px;
+  height: 100px;
+  margin-bottom: 12px;
+  border-width: 4px;
+}
+.change-avatar-button {
+  background: none;
+  border: none;
+  color: var(--accent-color);
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  padding: 6px 10px;
+  border-radius: var(--border-radius-l);
+  transition: background-color var(--transition-duration-fast)
+    var(--transition-easing-default);
+}
+.change-avatar-button:hover {
+  background-color: var(--hover-bg);
+}
+.change-avatar-button:active {
+  background-color: var(--active-bg);
+}
+
+/* Form Styling */
+.edit-form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 10px 16px 10px;
+  padding-bottom: 30vh;
+}
+.form-section {
+  margin-bottom: 16px;
+}
+.edit-form-group {
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius-l);
+  overflow: hidden;
+  padding: 0;
+}
+.edit-form-fieldset {
+  border: none;
+  padding: 0;
+  margin: 0;
+}
+.edit-form-fieldset:disabled {
+  opacity: 0.6;
+  pointer-events: none;
+}
+
+.input-wrapper {
+  padding: 12px 16px;
+  position: relative;
+  cursor: text;
+  user-select: none;
+}
+
+.edit-form-group .input-wrapper + .input-wrapper {
+  border-top: 1px solid var(--border-color);
+}
+
+/* Overlay for labels */
+.input-label-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  cursor: text;
+  z-index: 1;
+}
+
+.edit-form-group input[type="text"],
+.edit-form-group input[type="email"],
+.edit-form-group textarea {
+  width: 100%;
+  background: transparent;
+  border: none;
+  outline: none;
+  color: var(--text-primary);
+  font-size: 0.95rem;
+  font-weight: 500;
+  padding: 0;
+  box-sizing: border-box;
+  line-height: 1.4;
+  position: relative;
+  z-index: 2;
+}
+
+.edit-form-group input::placeholder,
+.edit-form-group textarea::placeholder {
+  color: var(--text-secondary);
+  opacity: 0.8;
+  font-weight: 400;
+}
+
+/* Textarea styles */
+.input-wrapper.textarea-wrapper {
+  padding: 12px 16px;
+}
+.edit-form-group textarea {
+  min-height: calc(1.4em * 1 + 4px);
+  height: auto;
+  resize: none !important;
+  overflow-y: hidden !important;
+  display: block;
+  line-height: 1.4;
+}
+
+/* Form info */
+.form-group-info {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  padding: 1px 16px 0 16px;
+  margin: 0;
+  text-align: left;
+  line-height: 1.4;
+  user-select: none;
+}
+
+/* Animations */
+.edit-avatar-area,
+.edit-form-list {
+  animation: fadeInContent 0.3s ease-out;
+}
+
+/* Error message styling */
+.profile-error-message {
+  padding: 10px 16px;
+  background-color: var(--color-danger-bg);
+  color: var(--color-danger);
+  text-align: center;
+  font-size: 0.9rem;
+  margin: 0 10px 10px 10px;
+  border-radius: var(--border-radius-m);
+  animation: fadeInContent 0.3s ease-out;
+}

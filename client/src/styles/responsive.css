@@ -45,7 +45,7 @@
   .chat-scroll {
     justify-content: flex-end;
     /* Adjusted bottom padding to clear the input area */
-    padding: 10px 0px calc(70px + env(safe-area-inset-bottom)) 10px; /* Approx input height + safe area */
+    padding: 10px 0px calc(75px + env(safe-area-inset-bottom)) 10px; /* Approx input height + safe area */
   }
   .close-chat {
     /* left: 0; */
@@ -187,6 +187,12 @@
 
   .plus-icon-wrapper {
     display: none !important;
+  }
+
+  /* Profile page */
+  .profile-header {
+    background-color: transparent !important;
+    border: none !important;
   }
 
   /* Sidebar panel bottom area */

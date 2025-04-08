@@ -12,12 +12,12 @@ import (
 	ssov1 "github.com/memxire/protobuf/gen/go/sso"
 	"google.golang.org/grpc"
 	"google.golang.org/grpc/codes"
-	"google.golang.org/grpc/credentials/insecure"
+	"google.golang.org/grpc/credentials/insecure" // TODO: switch to TLS in prod
 )
 
 type Client struct {
 	api ssov1.AuthClient
-	// log *slog.Logger
+	log *slog.Logger
 }
 
 func New(
@@ -37,11 +37,11 @@ func New(
 	}
 
 	logOpts := []grpclog.Option{
-		grpclog.WithLogOnEvents(grpclog.PayloadReceived, grpclog.PayloadSent),
+		grpclog.WithLogOnEvents(grpclog.StartCall, grpclog.FinishCall),
 	}
 
 	cc, err := grpc.DialContext(ctx, addr,
-		grpc.WithTransportCredentials(insecure.NewCredentials()),
+		grpc.WithTransportCredentials(insecure.NewCredentials()), // TODO: switch to TLS in prod
 		grpc.WithChainUnaryInterceptor(
 			grpclog.UnaryClientInterceptor(InterceptorLogger(log), logOpts...),
 			grpcretry.UnaryClientInterceptor(retryOpts...),

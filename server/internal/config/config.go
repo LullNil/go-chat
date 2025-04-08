@@ -9,18 +9,19 @@ import (
 )
 
 type Config struct {
-	Env         string `yaml:"env" env-default:"local"`
-	StoragePath string `yaml:"storage_path" env-required:"true"`
-	HTTPServer  `yaml:"http_server"`
-	Clients     ClientsConfig `yaml:"clients"`
-	AppSecret   string        `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
-	Redis       RedisConfig   `yaml:"redis"`
+	Env        string `yaml:"env" env-default:"local"`
+	HTTPServer `yaml:"http_server"`
+	Clients    ClientsConfig  `yaml:"clients"`
+	AppSecret  string         `yaml:"app_secret" env-required:"true" env:"APP_SECRET"`
+	Redis      RedisConfig    `yaml:"redis"`
+	Postgres   PostgresConfig `yaml:"postgres" env-required:"true"`
 }
 
 type HTTPServer struct {
-	Address     string        `yaml:"address" env-default:"localhost:8081"`
-	Timeout     time.Duration `yaml:"timeout" env-default:"5s"`
-	IdleTimeout time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	Address         string        `yaml:"address" env-default:"localhost:8081"`
+	Timeout         time.Duration `yaml:"timeout" env-default:"5s"`
+	IdleTimeout     time.Duration `yaml:"idle_timeout" env-default:"60s"`
+	ShutDownTimeout time.Duration `yaml:"shutdown_timeout" env-default:"10s"`
 }
 
 type Client struct {
@@ -35,9 +36,15 @@ type ClientsConfig struct {
 }
 
 type RedisConfig struct {
-	Addr     string `yaml:"addr"`
-	Password string `yaml:"password"`
-	DB       int    `yaml:"db"`
+	Addr            string        `yaml:"addr"`
+	Password        string        `yaml:"password"`
+	DB              int           `yaml:"db"`
+	SSOCacheTTL     time.Duration `yaml:"sso_cache_ttl" env-default:"5m"`
+	ProfileCacheTTL time.Duration `yaml:"profile_cache_ttl" env-default:"10m"`
+}
+
+type PostgresConfig struct {
+	DSN string `yaml:"dsn" env:"POSTGRES_DSN" env-required:"true"`
 }
 
 func MustLoad() *Config {

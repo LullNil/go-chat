@@ -1,0 +1,26 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    container_name: gochat_postgres
+    environment:
+      POSTGRES_USER: gochat
+      POSTGRES_PASSWORD: postgres
+      POSTGRES_DB: gochat_db
+    ports:
+      - "5433:5432"
+    volumes:
+      - pgdata_gochat_compose:/var/lib/postgresql/data
+    restart: unless-stopped
+
+  redis:
+    image: redis:7-alpine
+    container_name: gochat_redis
+    ports:
+      - "6379:6379"
+    volumes:
+      - redisdata_gochat_compose:/data
+    restart: unless-stopped
+
+volumes:
+  pgdata_gochat_compose:
+  redisdata_gochat_compose:
