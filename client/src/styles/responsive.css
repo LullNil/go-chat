@@ -47,6 +47,11 @@
     /* Adjusted bottom padding to clear the input area */
     padding: 10px 0px calc(75px + env(safe-area-inset-bottom)) 10px; /* Approx input height + safe area */
   }
+  .chat-input {
+    bottom: 10px;
+    left: 10px;
+    right: 10px;
+  }
   .close-chat {
     /* left: 0; */
     display: flex;
@@ -65,89 +70,6 @@
 
   .chat-title h2 {
     font-size: 1.3rem;
-  }
-
-  .chat-input {
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
-    margin: 0;
-    background-color: var(--bg-glass);
-    border-radius: 0;
-    padding: 8px 8px calc(8px + env(safe-area-inset-bottom)) 8px;
-    box-shadow: none;
-    border: none;
-    border-top: 1px solid var(--border-color);
-    gap: 3px;
-    align-items: flex-end;
-  }
-
-  .chat-input textarea {
-    background-color: var(--bg-secondary);
-    border-radius: 24px;
-    padding: 12px 15px;
-    box-sizing: border-box;
-    min-height: 48px;
-    max-height: 110px;
-    line-height: 1.4;
-    border: 1px solid var(--border-color);
-    box-shadow: none;
-    overflow-y: auto;
-    resize: none;
-    height: auto;
-    scrollbar-width: none;
-    -ms-overflow-style: none;
-    font-size: 1rem;
-  }
-  .chat-input textarea::-webkit-scrollbar {
-    display: none;
-    width: 0;
-    height: 0;
-  }
-  .dark-theme .chat-input textarea {
-    background-color: var(--bg-secondary-dark);
-    border-color: var(--border-dark);
-  }
-
-  .btn-circle {
-    width: 48px;
-    height: 48px;
-    background-color: transparent;
-    color: var(--accent-color);
-    transition: background-color var(--btn-transition-duration-fast)
-        var(--btn-transition-easing),
-      color var(--transition-duration-fast) var(--transition-easing-default),
-      transform var(--btn-transition-duration-fast) var(--transition-bounce);
-    flex-shrink: 0;
-  }
-  .btn-circle:hover,
-  .btn-circle:active {
-    background-color: transparent;
-    color: var(--accent-color);
-    filter: brightness(0.8);
-    transform: scale(1);
-    box-shadow: none;
-  }
-  .chat-input.has-text .btn-circle {
-    background-color: var(--accent-color);
-    color: white;
-  }
-  .dark-theme .chat-input.has-text .btn-circle {
-    color: var(--text-primary-dark);
-  }
-  .chat-input.has-text .btn-circle:hover {
-    filter: brightness(1.1);
-    transform: scale(1.05);
-  }
-  .chat-input.has-text .btn-circle:active {
-    filter: brightness(0.9);
-    transform: scale(0.95);
-  }
-
-  .send-icon {
-    width: 28px; /* Increased size */
-    height: 28px; /* Increased size */
   }
 
   /* Middle panel adaptation */

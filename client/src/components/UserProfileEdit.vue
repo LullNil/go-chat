@@ -43,49 +43,60 @@
 
       <!-- Profile list -->
       <div class="profile-list-scroll edit-scroll">
-        <!-- Edit avatar area -->
-        <div class="profile-content edit-avatar-area">
-          <div class="avatar-section-edit">
-            <!-- Avatar image -->
-            <div class="avatar large-avatar">
-              <img
-                v-if="currentUser?.avatarUrl"
-                :src="currentUser.avatarUrl"
-                alt="Avatar"
-                class="avatar-image"
-                @error="onAvatarError"
-              />
-              <span v-else class="avatar-initials">{{ userInitials }}</span>
-            </div>
+        <form @submit.prevent="saveProfile" class="edit-profile-form">
+          <fieldset
+            :disabled="isSaving"
+            class="edit-form-fieldset"
+            ref="formContainer"
+          >
+            <div class="edit-profile-top-section">
+              <!-- Avatar -->
+              <div class="edit-avatar-wrapper">
+                <div
+                  class="avatar large-avatar"
+                  @click="changeAvatar"
+                  :class="{ disabled: isSaving }"
+                  role="button"
+                  tabindex="0"
+                  @keydown.enter="changeAvatar"
+                  @keydown.space="changeAvatar"
+                >
+                  <img
+                    v-if="currentUser?.avatarUrl"
+                    :src="currentUser.avatarUrl"
+                    alt="Avatar"
+                    class="avatar-image"
+                    @error="onAvatarError"
+                  />
+                  <span v-else class="avatar-initials">{{ userInitials }}</span>
 
-            <!-- Change avatar button -->
-            <button
-              class="change-avatar-button"
-              @click="changeAvatar"
-              :disabled="isSaving"
-            >
-              Изменить фото
-            </button>
-            <input
-              type="file"
-              ref="avatarInput"
-              @change="handleAvatarChange"
-              accept="image/png, image/jpeg, image/webp"
-              style="display: none"
-            />
-          </div>
-        </div>
+                  <div class="avatar-overlay">
+                    <svg
+                      class="edit-icon"
+                      xmlns="http://www.w3.org/2000/svg"
+                      viewBox="0 0 24 24"
+                      fill="currentColor"
+                      width="24"
+                      height="24"
+                    >
+                      <path d="M0 0h24v24H0V0z" fill="none" />
+                      <path
+                        d="M3 17.25V21h3.75L17.81 9.94l-3.75-3.75L3 17.25zM20.71 7.04c.39-.39.39-1.02 0-1.41l-2.34-2.34c-.39-.39-1.02-.39-1.41 0l-1.83 1.83 3.75 3.75 1.83-1.83z"
+                      />
+                    </svg>
+                    <span class="overlay-text">Изменить фото</span>
+                  </div>
+                </div>
+                <input
+                  type="file"
+                  ref="avatarInput"
+                  @change="handleAvatarChange"
+                  accept="image/png, image/jpeg, image/webp"
+                  style="display: none"
+                />
+              </div>
 
-        <!-- Edit form area -->
-        <fieldset
-          :disabled="isSaving"
-          class="edit-form-fieldset"
-          ref="formContainer"
-        >
-          <form @submit.prevent="saveProfile" class="edit-form-list">
-            <!-- First name and last name section -->
-            <div class="form-section">
-              <div class="menu-item-container edit-form-group">
+              <div class="edit-name-inputs menu-item-container edit-form-group">
                 <div class="input-wrapper" @click="focusInput('firstName')">
                   <label for="firstName" class="input-label-overlay"></label>
                   <input
@@ -101,69 +112,66 @@
                   <input
                     type="text"
                     id="lastName"
-                    placeholder="Фамилия (необязательно)"
+                    placeholder="Фамилия"
                     v-model.trim="editableUser.lastName"
                     autocomplete="family-name"
                   />
                 </div>
               </div>
-              <p class="form-group-info">
-                Введите ваше имя и, по желанию, фамилию.
-              </p>
             </div>
 
-            <!-- Username and email section -->
-            <div class="form-section">
-              <div class="menu-item-container edit-form-group">
-                <div class="input-wrapper" @click="focusInput('username')">
-                  <label for="username" class="input-label-overlay"></label>
-                  <input
-                    type="text"
-                    id="username"
-                    placeholder="Имя пользователя"
-                    v-model.trim="editableUser.username"
-                    autocomplete="username"
-                  />
+            <div class="edit-form-list">
+              <div class="form-section">
+                <div class="menu-item-container edit-form-group">
+                  <div class="input-wrapper" @click="focusInput('username')">
+                    <label for="username" class="input-label-overlay"></label>
+                    <input
+                      type="text"
+                      id="username"
+                      placeholder="Имя пользователя"
+                      v-model.trim="editableUser.username"
+                      autocomplete="username"
+                    />
+                  </div>
+                  <div class="input-wrapper" @click="focusInput('email')">
+                    <label for="email" class="input-label-overlay"></label>
+                    <input
+                      type="email"
+                      id="email"
+                      placeholder="Email"
+                      v-model.trim="editableUser.email"
+                      autocomplete="email"
+                    />
+                  </div>
                 </div>
-                <div class="input-wrapper" @click="focusInput('email')">
-                  <label for="email" class="input-label-overlay"></label>
-                  <input
-                    type="email"
-                    id="email"
-                    placeholder="Email"
-                    v-model.trim="editableUser.email"
-                    autocomplete="email"
-                  />
-                </div>
+                <p class="form-group-info">
+                  Имя пользователя должно быть уникальным.
+                </p>
               </div>
-              <p class="form-group-info">
-                Имя пользователя должно быть уникальным.
-              </p>
-            </div>
 
-            <!-- Bio section -->
-            <div class="form-section">
-              <div class="menu-item-container edit-form-group">
-                <div
-                  class="input-wrapper textarea-wrapper"
-                  @click="focusInput('bio')"
-                >
-                  <label for="bio" class="input-label-overlay"></label>
-                  <textarea
-                    id="bio"
-                    ref="bioTextarea"
-                    placeholder="О себе (необязательно)"
-                    v-model="editableUser.bio"
-                    @input="adjustTextareaHeight"
-                  ></textarea>
+              <div class="form-section">
+                <div class="menu-item-container edit-form-group">
+                  <div
+                    class="input-wrapper textarea-wrapper"
+                    @click="focusInput('bio')"
+                  >
+                    <label for="bio" class="input-label-overlay"></label>
+                    <textarea
+                      id="bio"
+                      ref="bioTextarea"
+                      placeholder="О себе (необязательно)"
+                      v-model="editableUser.bio"
+                      @input="adjustTextareaHeight"
+                    ></textarea>
+                  </div>
                 </div>
+                <p class="form-group-info">
+                  Краткое описание, которое будет видно в вашем профиле.
+                </p>
               </div>
-              <p class="form-group-info">
-                Краткое описание, которое будет видно в вашем профиле.
-              </p>
             </div>
-          </form>
-        </fieldset>
+          </fieldset>
+        </form>
       </div>
     </div>
 

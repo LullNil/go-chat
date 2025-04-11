@@ -24,7 +24,7 @@
 .chat-scroll {
   flex: 1;
   overflow-y: auto;
-  padding: 10px 15px 105px 15px;
+  padding: 10px 15px 75px 15px;
   display: flex;
   flex-direction: column;
   scrollbar-gutter: stable both-edges;
@@ -177,13 +177,13 @@
   background: var(--bg-glass);
   backdrop-filter: blur(var(--glass-blur));
   -webkit-backdrop-filter: blur(var(--glass-blur));
-  border-radius: var(--border-radius-xl);
-  padding: 14px 14px 14px 18px;
-  box-shadow: var(--shadow-color);
+  border-radius: var(--border-radius-l);
+  padding: 5px 5px 5px 15px;
+  box-shadow: none;
   border: 1px solid transparent;
   display: flex;
   align-items: flex-end;
-  gap: 10px;
+  gap: 8px;
   transition: var(--transition-default);
 }
 
@@ -191,19 +191,15 @@
 .chat-input textarea {
   flex: 1;
   background: transparent;
-  border-radius: 0;
-  padding: 12px 0;
+  padding: 9px 0;
   font-size: 1rem;
   color: var(--text-primary);
   resize: none;
   overflow-y: auto;
-  max-height: 130px;
-  min-height: 50px;
+  max-height: 160px;
+  min-height: 38px;
   line-height: 1.45;
   outline: none;
-  user-select: none;
-  box-shadow: none;
-  font-family: inherit;
   border: none;
   box-sizing: border-box;
   overflow-wrap: break-word;
@@ -214,67 +210,56 @@
   }
 }
 
-/* Send Button - Refined Interactions */
-.btn-circle {
-  width: 48px;
-  height: 48px;
-  border: none;
+/* Send Button */
+.send-button {
+  width: 38px;
+  height: 38px;
   border-radius: 50%;
-  background-color: transparent;
-  color: var(--btn-icon-color);
+  background-color: var(--accent-color);
+  color: var(--accent-contrast-color, #ffffff);
   cursor: pointer;
   display: flex;
   align-items: center;
   justify-content: center;
+  margin-bottom: 1px;
   flex-shrink: 0;
   outline: none;
-  box-shadow: none;
+  border: none;
+  box-shadow: var(--btn-shadow-idle, 0 1px 3px rgba(0, 0, 0, 0.1));
   overflow: hidden;
   transform-origin: center center;
-  transform: scale(1);
-  position: relative;
-  transition: background-color var(--btn-transition-duration-hover)
-      var(--btn-transition-easing),
-    color var(--btn-transition-duration-hover) var(--btn-transition-easing),
-    box-shadow var(--btn-transition-duration-hover) var(--btn-transition-easing),
-    transform var(--btn-transition-duration-hover) var(--transition-bounce);
+  transition: transform 0.15s var(--btn-transition-easing),
+    box-shadow 0.15s var(--btn-transition-easing),
+    background-color 0.15s var(--btn-transition-easing);
 }
-
-.btn-circle:hover {
-  background-color: var(--btn-bg-hover);
-  color: var(--btn-icon-color-hover);
-  box-shadow: var(--btn-shadow-hover);
+.send-button:hover {
   transform: scale(1.08);
-  filter: none;
-  transition-duration: var(--btn-transition-duration-hover);
-  transition-timing-function: var(--btn-transition-easing);
 }
-
-.btn-circle:active {
-  background-color: var(--btn-bg-active);
-  color: var(--btn-icon-color-active);
-  transform: scale(1);
-  box-shadow: var(--btn-shadow-active);
-  filter: none;
-  transition-duration: var(--btn-transition-duration-active);
-  transition-timing-function: var(--btn-transition-easing);
-  transition-property: background-color, color, box-shadow, transform;
+.send-button:active {
+  transform: scale(0.95);
+  transition-duration: 0.08s;
 }
-
-.send-icon {
-  width: 26px;
-  height: 26px;
+/* Send Arrow Icon */
+.send-arrow-icon {
+  width: 22px;
+  height: 22px;
   display: block;
-  transition: none;
-}
-.send-icon path {
   fill: currentColor;
-  stroke: none;
+}
+/* Puff Animation for Send Button */
+.puff-send-enter-active,
+.puff-send-leave-active {
+  transition: transform 0.2s cubic-bezier(0.18, 0.89, 0.32, 1.28),
+    opacity 0.15s ease-out;
+  transform-origin: center center;
+}
+.puff-send-enter-from,
+.puff-send-leave-to {
+  transform: scale(0.4);
+  opacity: 0;
 }
 
 /* Scrollbar Styling */
-
-/* Webkit Scrollbars */
 .chat-scroll::-webkit-scrollbar {
   width: var(--scrollbar-width);
 }
@@ -293,7 +278,7 @@
 
 /* Textarea Scrollbar (Webkit) */
 .chat-input textarea::-webkit-scrollbar {
-  width: var(--scrollbar-width-thin); /* Consistent variable */
+  width: var(--scrollbar-width-thin);
 }
 .chat-input textarea::-webkit-scrollbar-track {
   background: transparent;

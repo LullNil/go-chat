@@ -102,7 +102,7 @@
   vertical-align: middle;
 }
 
-/* Scrollable Area & Avatar */
+/* Scrollable Area */
 .edit-scroll {
   flex: 1 1 auto;
   overflow-y: auto;
@@ -122,72 +122,7 @@
   background: transparent;
 }
 
-/* Avatar Section */
-.avatar-image {
-  width: 100%;
-  height: 100%;
-  object-fit: cover;
-  display: block;
-}
-.avatar-initials {
-  font-size: 3rem;
-  font-weight: 600;
-  color: var(--bg-primary);
-  user-select: none;
-}
-.edit-avatar-area {
-  padding-bottom: 10px;
-  border-bottom: 1px solid var(--border-color);
-  margin-bottom: 16px;
-}
-.avatar-section-edit {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  padding-top: 10px;
-}
-.avatar.large-avatar {
-  width: 100px;
-  height: 100px;
-  margin-bottom: 12px;
-  border-width: 4px;
-}
-.change-avatar-button {
-  background: none;
-  border: none;
-  color: var(--accent-color);
-  cursor: pointer;
-  font-size: 0.9rem;
-  font-weight: 500;
-  padding: 6px 10px;
-  border-radius: var(--border-radius-l);
-  transition: background-color var(--transition-duration-fast)
-    var(--transition-easing-default);
-}
-.change-avatar-button:hover {
-  background-color: var(--hover-bg);
-}
-.change-avatar-button:active {
-  background-color: var(--active-bg);
-}
-
-/* Form Styling */
-.edit-form-list {
-  display: flex;
-  flex-direction: column;
-  gap: 0;
-  padding: 0 10px 16px 10px;
-  padding-bottom: 30vh;
-}
-.form-section {
-  margin-bottom: 16px;
-}
-.edit-form-group {
-  background: var(--bg-secondary);
-  border-radius: var(--border-radius-l);
-  overflow: hidden;
-  padding: 0;
-}
+/* Form & Fieldset */
 .edit-form-fieldset {
   border: none;
   padding: 0;
@@ -198,18 +133,125 @@
   pointer-events: none;
 }
 
+/* Top section layout (Avatar + Name Inputs) */
+.edit-profile-top-section {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 16px 10px 16px 10px;
+  margin-bottom: 0;
+}
+
+/* Avatar wrapper */
+.edit-avatar-wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  flex-shrink: 0;
+  position: relative;
+}
+
+/* Avatar Styles */
+.avatar.large-avatar {
+  width: 70px;
+  height: 70px;
+  border-width: 4px;
+  margin-bottom: 0;
+  position: relative;
+  overflow: hidden;
+  cursor: pointer;
+  transition: opacity 0.2s ease-in-out;
+  outline: none;
+}
+.avatar.large-avatar.disabled {
+  cursor: default;
+  opacity: 0.7;
+}
+.avatar-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Avatar Overlay Styles */
+.avatar-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.55);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  opacity: 0;
+  transition: opacity 0.2s ease-in-out;
+  pointer-events: none;
+  text-align: center;
+}
+.avatar.large-avatar:not(.disabled):hover .avatar-overlay {
+  opacity: 1;
+}
+
+.edit-icon {
+  width: 22px;
+  height: 22px;
+  color: #ffffff;
+  margin-bottom: 4px;
+}
+.overlay-text {
+  color: #ffffff;
+  font-size: 0.75rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+/* Name Inputs Container */
+.edit-name-inputs {
+  flex-grow: 1;
+  min-width: 0;
+}
+.edit-name-inputs .input-wrapper {
+  padding-top: 6px;
+  padding-bottom: 6px;
+}
+
+/* Container for remaining form sections */
+.edit-form-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0;
+  padding: 0 10px 16px 10px;
+  padding-bottom: 30vh;
+  margin-top: 20px;
+}
+
+/* Individual form sections (Username/Email, Bio) */
+.form-section {
+  margin-bottom: 16px;
+}
+
+/* Input Group Container Styling */
+.edit-form-group {
+  background: var(--bg-secondary);
+  border-radius: var(--border-radius-l);
+  overflow: hidden;
+  padding: 0;
+}
+
+/* Input Wrappers (для остальных полей) */
 .input-wrapper {
-  padding: 12px 16px;
+  padding: 12px 16px; /* Стандартный паддинг для остальных */
   position: relative;
   cursor: text;
   user-select: none;
 }
-
 .edit-form-group .input-wrapper + .input-wrapper {
   border-top: 1px solid var(--border-color);
 }
 
-/* Overlay for labels */
+/* Input Label Overlay (for clicking) */
 .input-label-overlay {
   position: absolute;
   top: 0;
@@ -220,6 +262,7 @@
   z-index: 1;
 }
 
+/* General Input/Textarea Styling */
 .edit-form-group input[type="text"],
 .edit-form-group input[type="email"],
 .edit-form-group textarea {
@@ -244,24 +287,46 @@
   font-weight: 400;
 }
 
-/* Textarea styles */
+/* Textarea specific styles */
 .input-wrapper.textarea-wrapper {
   padding: 12px 16px;
 }
 .edit-form-group textarea {
   min-height: calc(1.4em * 1 + 4px);
+  max-height: 160px;
   height: auto;
   resize: none !important;
-  overflow-y: hidden !important;
+  overflow-y: auto;
   display: block;
   line-height: 1.4;
 }
+/* Textarea Scrollbar (Webkit) */
+.edit-form-group textarea::-webkit-scrollbar {
+  width: var(--scrollbar-width-thin); /* Consistent variable */
+}
+.edit-form-group textarea::-webkit-scrollbar-track {
+  background: transparent;
+  margin: 4px 0;
+}
+.edit-form-group textarea::-webkit-scrollbar-thumb {
+  background-color: var(--text-placeholder);
+  border-radius: calc(var(--scrollbar-width-thin) / 2);
+}
 
-/* Form info */
+/* Firefox Scrollbars */
+.edit-form-group textarea {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scrollbar-thumb-bg) transparent;
+}
+.edit-form-group textarea {
+  scrollbar-color: var(--text-placeholder) transparent;
+}
+
+/* Form group info text styling */
 .form-group-info {
   font-size: 0.8rem;
   color: var(--text-secondary);
-  padding: 1px 16px 0 16px;
+  padding: 4px 16px 0 16px;
   margin: 0;
   text-align: left;
   line-height: 1.4;
@@ -269,7 +334,7 @@
 }
 
 /* Animations */
-.edit-avatar-area,
+.edit-profile-top-section,
 .edit-form-list {
   animation: fadeInContent 0.3s ease-out;
 }
@@ -284,4 +349,15 @@
   margin: 0 10px 10px 10px;
   border-radius: var(--border-radius-m);
   animation: fadeInContent 0.3s ease-out;
+}
+
+@keyframes fadeInContent {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
 }

@@ -39,9 +39,26 @@
 
       <!-- Profile content -->
       <div class="profile-content">
-        <div class="avatar"></div>
-        <div class="user-full-name" v-if="userFullName">{{ userFullName }}</div>
-        <div class="username">@{{ user?.username }}</div>
+        <div class="profile-main-info">
+          <div class="avatar">
+            <img
+              v-if="user?.avatarUrl"
+              :src="user.avatarUrl"
+              alt="Avatar"
+              class="avatar-image"
+              @error="onAvatarError"
+            />
+            <span v-else class="avatar-initials">{{ userInitials }}</span>
+          </div>
+          <div class="user-name-details">
+            <div class="user-full-name" v-if="userFullName">
+              {{ userFullName }}
+            </div>
+            <div class="username">{{ user?.username }}</div>
+          </div>
+        </div>
+
+        <div class="profile-bio">Здесь будет биография пользователя.</div>
       </div>
 
       <!-- Profile list preferences -->
@@ -153,6 +170,18 @@ export default {
       const { firstName, lastName } = this.user;
       return [firstName, lastName].filter(Boolean).join(" ").trim() || null;
     },
+    userInitials() {
+      // Используем this.user, полученный из mapGetters
+      const first = this.user?.firstName?.[0] || "";
+      const last = this.user?.lastName?.[0] || "";
+      const usernameInitial = this.user?.username?.[0] || "?";
+      const fallbackInitial =
+        usernameInitial === "?" ? "?" : usernameInitial.toUpperCase();
+      // Собираем инициалы: первые буквы имени и фамилии,
+      // или первая буква имени пользователя, если имя/фамилия не заданы
+      const initials = (first + last).toUpperCase();
+      return initials || fallbackInitial;
+    },
   },
   watch: {
     user(newUser) {
@@ -164,6 +193,10 @@ export default {
   methods: {
     ...mapActions("theme", ["toggleTheme"]),
 
+    onAvatarError(event) {
+      console.warn("UserProfile: Failed to load avatar image.", event);
+    },
+    
     closeProfile() {
       this.$emit("close");
     },

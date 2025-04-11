@@ -317,7 +317,17 @@ export default {
     ...mapGetters("auth", ["isAuthenticated", "user"]),
     ...mapGetters("theme", ["isDarkTheme"]),
     profileLabel() {
-      return this.user?.username;
+      const user = this.user;
+
+      if (user) {
+        if (user.firstName && String(user.firstName).trim()) {
+          return String(user.firstName).trim();
+        }
+        if (user.username && String(user.username).trim()) {
+          return String(user.username).trim();
+        }
+      }
+      return "Профиль";
     },
   },
   methods: {
